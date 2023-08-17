@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Pawn.h"
 #include "TurretPawn.generated.h"
 
@@ -25,5 +26,17 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UCapsuleComponent> CapsuleComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UStaticMeshComponent> BaseMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UStaticMeshComponent> TurretMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USceneComponent> ProjectileSpawnPoint;
 
 };

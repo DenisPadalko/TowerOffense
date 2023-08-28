@@ -48,7 +48,6 @@ void ATurretPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
-//void ATurretPawn::PostInitComponents()
 void ATurretPawn::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

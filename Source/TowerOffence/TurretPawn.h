@@ -21,7 +21,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void PostInitializeComponents() override;
-	//void PostInitComponents();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

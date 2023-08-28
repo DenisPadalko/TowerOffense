@@ -13,5 +13,4 @@ UCLASS()
 class TOWEROFFENCE_API ATankPawn : public ATurretPawn
 {
 	GENERATED_BODY()
-	
 };

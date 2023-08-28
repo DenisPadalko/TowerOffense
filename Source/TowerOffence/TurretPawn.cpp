@@ -22,6 +22,11 @@ ATurretPawn::ATurretPawn()
 	ProjectileSpawnPoint->SetupAttachment(RootComponent);
 }
 
+TArray<FName> ATurretPawn::GetNameOptions() const
+{
+	return TurretMesh->GetMaterialSlotNames();
+}
+
 // Called when the game starts or when spawned
 void ATurretPawn::BeginPlay()
 {
@@ -41,5 +46,21 @@ void ATurretPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+//void ATurretPawn::PostInitComponents()
+void ATurretPawn::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
+	const int MaterialIndex = TurretMesh->GetMaterialIndex(MaterialSlotName);
+	const TObjectPtr<UMaterialInterface> Material = TurretMesh->GetMaterial(MaterialIndex);
+	if(!DynamicMaterialInstance)
+	{
+		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+	}
+	DynamicMaterialInstance->SetVectorParameterValue(ParameterName, ColorOfTeam);
+	TurretMesh->SetMaterial(MaterialIndex, DynamicMaterialInstance);
+	BaseMesh->SetMaterial(BaseMesh->GetMaterialIndex(MaterialSlotName), DynamicMaterialInstance);
 }
 

@@ -17,7 +17,7 @@ public:
 	ATurretPawn();
 
 	UFUNCTION(CallInEditor)
-	TArray<FName> GetNameOptions() const;
+	TArray<FString> GetNameOptions() const;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void PostInitializeComponents() override;
@@ -45,13 +45,11 @@ public:
 	TObjectPtr<USceneComponent> ProjectileSpawnPoint;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default", meta=(GetOptions = "GetNameOptions"))
-	FName MaterialSlotName;
+	FName MaterialSlotName = "TeamColor";
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	FName ParameterName;
+	FName ParameterName = "Color";
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	FColor ColorOfTeam;
-
-	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterialInstance;
+	FColor ColorOfTeam = FColor::Yellow;
 };

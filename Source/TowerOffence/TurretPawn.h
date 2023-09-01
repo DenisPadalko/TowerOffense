@@ -16,6 +16,10 @@ public:
 	// Sets default values for this pawn's properties
 	ATurretPawn();
 
+	UFUNCTION(CallInEditor)
+	TArray<FString> GetNameOptions() const;
+
+	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,4 +43,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USceneComponent> ProjectileSpawnPoint;
 
+	UPROPERTY(EditDefaultsOnly, Category="Default", meta=(GetOptions = "GetNameOptions"))
+	FName MaterialSlotName = "TeamColor";
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	FName ParameterName = "Color";
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	FColor ColorOfTeam = FColor::Yellow;
 };

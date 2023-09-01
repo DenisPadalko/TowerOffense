@@ -19,7 +19,6 @@ public:
 	UFUNCTION(CallInEditor)
 	TArray<FString> GetNameOptions() const;
 
-	UFUNCTION(BlueprintCallable)
 	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned

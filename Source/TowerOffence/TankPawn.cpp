@@ -11,11 +11,6 @@ ATankPawn::ATankPawn()
 	SpringArmComponent->SetupAttachment(RootComponent);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	//Camera->AttachToComponent(SpringArmComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	Camera->SetupAttachment(SpringArmComponent);
-	
-	SpringArmComponent->bUsePawnControlRotation = true;
-	SpringArmComponent->bEnableCameraLag = true;
-	SpringArmComponent->TargetArmLength = 500.0f;
 }
 

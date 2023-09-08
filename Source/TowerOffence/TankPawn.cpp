@@ -21,9 +21,9 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
-	if(APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	if(TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController()))
 	{
-		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if(TObjectPtr<UEnhancedInputLocalPlayerSubsystem> Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->ClearAllMappings();
 			Subsystem->AddMappingContext(InputMappingContext, 0);

@@ -40,11 +40,11 @@ protected:
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	UInputAction* MoveForwardAction;
+	TObjectPtr<UInputAction> MoveForwardAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	UInputAction* TurnRightAction;
+	TObjectPtr<UInputAction> TurnRightAction;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	UInputAction* FireAction;
+	TObjectPtr<UInputAction> FireAction;
 };

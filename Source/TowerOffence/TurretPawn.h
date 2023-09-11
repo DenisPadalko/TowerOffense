@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Pawn.h"
 #include "TurretPawn.generated.h"
@@ -20,6 +21,8 @@ public:
 	TArray<FString> GetNameOptions() const;
 
 	virtual void PostInitializeComponents() override;
+
+	virtual void Look(const FInputActionValue& InValue){}
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -15,6 +15,8 @@ ATankPawn::ATankPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArmComponent);
+
+	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -39,15 +41,27 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ATankPawn::Move(const FInputActionValue& InValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveForward action was called"));
+	FVector MovementVector(0.0f, 0.0f, 0.0f);
+	const float Alpha = FMath::Clamp(RunningTime / TimeToMove, 0, 1);
+	RunningTime += GetWorld()->GetDeltaSeconds();
+	MovementVector.Y = FMath::Lerp(0.0f, MovementSpeed * InValue.Get<FVector>().Y, Alpha);
+	AddActorLocalOffset(MovementVector);
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("TurnRight action was called"));
+	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<FVector>().X, 0.0f));
 }
 
 void ATankPawn::Fire()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire action was called"));
+}
+
+void ATankPawn::Look(const FInputActionValue& InValue)
+{
+	const FVector2D LookAxisVector = InValue.Get<FVector2D>();
+
+	AddControllerPitchInput(LookAxisVector.Y);
+	AddControllerYawInput(LookAxisVector.X);
 }

@@ -17,6 +17,8 @@ class TOWEROFFENCE_API ATankPawn : public ATurretPawn
 	GENERATED_BODY()
 public:
 	ATankPawn();
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
@@ -28,9 +30,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void Fire();
-	
-	UFUNCTION(BlueprintCallable, Category="Functions")
-	virtual void Look(const FInputActionValue& InValue) override;
+
+	void FinishMoving();
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
     TObjectPtr<USpringArmComponent> SpringArmComponent;
@@ -43,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float RotationSpeed = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category="Default")
+	float TurretRotationSpeed = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float AccelerationDuration = 5.0f;
@@ -59,6 +63,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputAction> FireAction;
 private:
-	float RunningTime = 0.0f;
+	float MovementTime = 0.0f;
 	float TimeToMove = 1.0f;
 };

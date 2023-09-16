@@ -22,7 +22,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	virtual void Look(const FInputActionValue& InValue){}
+	void TurnTurret(const FRotator& InValue, const float DeltaTime, const float RotationSpeed) const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

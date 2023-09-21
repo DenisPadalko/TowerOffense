@@ -65,8 +65,8 @@ void ATurretPawn::PostInitializeComponents()
 	BaseMesh->SetVectorParameterValueOnMaterials(ParameterName, FVector(ColorOfTeam));
 }
 
-void ATurretPawn::TurnTurret(const FRotator& InValue, const float DeltaTime, const float RotationSpeed) const
+void ATurretPawn::TurnTurret(const FRotator& InValue) const
 {
-	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, DeltaTime, RotationSpeed);
+	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
 	TurretMesh->SetWorldRotation(Rotation);
 }

@@ -3,6 +3,8 @@
 
 #include "TankPawn.h"
 
+#include <string>
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -58,27 +60,41 @@ void ATankPawn::Tick(float DeltaSeconds)
 		Rotation.Pitch = 0.0f;
 		Rotation.Yaw -= 90.0f;
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
-		TurnTurret(Rotation, DeltaSeconds, TurretRotationSpeed);
+		TurnTurret(Rotation);
 	}
 }
 
 void ATankPawn::Move(const FInputActionValue& InValue)
 {
 	MovementTime += GetWorld()->GetDeltaSeconds();
-	FVector MovementVector(0.0f, 0.0f, 0.0f);
-	const float Alpha = FMath::Clamp(MovementTime / TimeToMove, 0, 1);
-	MovementVector.Y = FMath::Lerp(0.0f, MovementSpeed * InValue.Get<FVector>().Y, Alpha);
-	AddActorLocalOffset(MovementVector);
+	GetSpeed(InValue);
+	const FVector Velocity = GetActorLocation().ForwardVector * CurrentSpeed;
+	
+	const FVector DeltaMove = Velocity * GetWorld()->GetDeltaSeconds();
+	AddActorLocalOffset(DeltaMove);
+}
+
+void ATankPawn::GetSpeed(const FInputActionValue& InValue)
+{
+	InterpolateSpeed(InValue.Get<float>());
+}
+
+
+void ATankPawn::InterpolateSpeed(float MovingDirection)
+{
+	const float Alpha = FMath::Clamp(MovementTime / AccelerationDuration, 0, 1);
+	CurrentSpeed = FMath::Lerp(CurrentSpeed, MovementSpeed * MovingDirection, Alpha);
 }
 
 void ATankPawn::FinishMoving()
 {
 	MovementTime = 0.0f;
+	CurrentSpeed = 0.0f;
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
 {
-	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<FVector>().X, 0.0f));
+	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
 }
 
 void ATankPawn::Fire()

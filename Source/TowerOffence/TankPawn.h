@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void Fire();
 
+	void GetSpeed(const FInputActionValue& InValue);
+	void InterpolateSpeed(float MovingDirection);
+
 	void FinishMoving();
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
@@ -44,9 +47,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float RotationSpeed = 1.0f;
-
-	UPROPERTY(EditAnywhere, Category="Default")
-	float TurretRotationSpeed = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float AccelerationDuration = 5.0f;
@@ -64,5 +64,5 @@ protected:
 	TObjectPtr<UInputAction> FireAction;
 private:
 	float MovementTime = 0.0f;
-	float TimeToMove = 1.0f;
+	float CurrentSpeed = 0.0f;
 };

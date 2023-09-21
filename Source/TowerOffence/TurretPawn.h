@@ -22,7 +22,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	void TurnTurret(const FRotator& InValue, const float DeltaTime, const float RotationSpeed) const;
+	void TurnTurret(const FRotator& InValue) const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -54,4 +54,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	FColor ColorOfTeam = FColor::Yellow;
+
+	UPROPERTY(EditAnywhere, Category="Default")
+	float TurretRotationSpeed = 1.0f;
 };

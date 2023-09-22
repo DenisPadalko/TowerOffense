@@ -23,7 +23,7 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
-	void Move(const FInputActionValue& InValue);
+	void InputMove(const FInputActionValue& InValue);
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void Turn(const FInputActionValue& InValue);
@@ -31,9 +31,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void Fire();
 
-	void GetSpeed(const FInputActionValue& InValue);
-	void InterpolateSpeed(float MovingDirection);
-
+	void Move(const float Direction);
+	float GetCurrentSpeed() const;
 	void FinishMoving();
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
@@ -64,5 +63,4 @@ protected:
 	TObjectPtr<UInputAction> FireAction;
 private:
 	float MovementTime = 0.0f;
-	float CurrentSpeed = 0.0f;
 };

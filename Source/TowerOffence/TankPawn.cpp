@@ -39,7 +39,7 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::Move);
+		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Completed, this, &ATankPawn::FinishMoving);
 		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ATankPawn::Turn);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::Fire);
@@ -64,32 +64,33 @@ void ATankPawn::Tick(float DeltaSeconds)
 	}
 }
 
-void ATankPawn::Move(const FInputActionValue& InValue)
+void ATankPawn::InputMove(const FInputActionValue& InValue)
 {
-	MovementTime += GetWorld()->GetDeltaSeconds();
-	GetSpeed(InValue);
-	const FVector Velocity = GetActorLocation().ForwardVector * CurrentSpeed;
-	
-	const FVector DeltaMove = Velocity * GetWorld()->GetDeltaSeconds();
+	Move(InValue.Get<float>());
+}
+
+void ATankPawn::Move(const float Direction)
+{
+	const float DeltaTime = GetWorld()->GetDeltaSeconds();
+	MovementTime += DeltaTime;
+
+	const float Speed = GetCurrentSpeed();
+	const FVector Velocity = GetActorLocation().ForwardVector * Direction * Speed;
+
+	const FVector DeltaMove = Velocity * DeltaTime;
 	AddActorLocalOffset(DeltaMove);
 }
 
-void ATankPawn::GetSpeed(const FInputActionValue& InValue)
-{
-	InterpolateSpeed(InValue.Get<float>());
-}
-
-
-void ATankPawn::InterpolateSpeed(float MovingDirection)
+float ATankPawn::GetCurrentSpeed() const
 {
 	const float Alpha = FMath::Clamp(MovementTime / AccelerationDuration, 0, 1);
-	CurrentSpeed = FMath::Lerp(CurrentSpeed, MovementSpeed * MovingDirection, Alpha);
+	return FMath::Lerp(0.0f, MovementSpeed, Alpha);
 }
+
 
 void ATankPawn::FinishMoving()
 {
 	MovementTime = 0.0f;
-	CurrentSpeed = 0.0f;
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)

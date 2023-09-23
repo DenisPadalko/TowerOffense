@@ -3,8 +3,11 @@
 
 #include "TankPawn.h"
 
+#include <string>
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ATankPawn::ATankPawn()
 {
@@ -15,6 +18,8 @@ ATankPawn::ATankPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArmComponent);
+
+	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -28,23 +33,69 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			Subsystem->ClearAllMappings();
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->bEnableClickEvents = true;
+		PlayerController->bEnableMouseOverEvents = true;
 	}
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::Move);
+		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
+		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Completed, this, &ATankPawn::FinishMoving);
 		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ATankPawn::Turn);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::Fire);
 	}
 }
 
-void ATankPawn::Move(const FInputActionValue& InValue)
+void ATankPawn::Tick(float DeltaSeconds)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MoveForward action was called"));
+	Super::Tick(DeltaSeconds);
+	
+	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
+	FHitResult HitResult;
+	if(PlayerController)
+	{
+		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(), HitResult.ImpactPoint);
+		Rotation.Roll = 0.0f;
+		Rotation.Pitch = 0.0f;
+		Rotation.Yaw -= 90.0f;
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
+		TurnTurret(Rotation);
+	}
+}
+
+void ATankPawn::InputMove(const FInputActionValue& InValue)
+{
+	Move(InValue.Get<float>());
+}
+
+void ATankPawn::Move(const float Direction)
+{
+	const float DeltaTime = GetWorld()->GetDeltaSeconds();
+	MovementTime += DeltaTime;
+
+	const float Speed = GetCurrentSpeed();
+	const FVector Velocity = GetActorLocation().ForwardVector * Direction * Speed;
+
+	const FVector DeltaMove = Velocity * DeltaTime;
+	AddActorLocalOffset(DeltaMove);
+}
+
+float ATankPawn::GetCurrentSpeed() const
+{
+	const float Alpha = FMath::Clamp(MovementTime / AccelerationDuration, 0, 1);
+	return FMath::Lerp(0.0f, MovementSpeed, Alpha);
+}
+
+
+void ATankPawn::FinishMoving()
+{
+	MovementTime = 0.0f;
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("TurnRight action was called"));
+	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
 }
 
 void ATankPawn::Fire()

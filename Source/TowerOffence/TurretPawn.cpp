@@ -64,3 +64,9 @@ void ATurretPawn::PostInitializeComponents()
 	BaseMesh->CreateDynamicMaterialInstance(BaseMesh->GetMaterialIndex(MaterialSlotName));
 	BaseMesh->SetVectorParameterValueOnMaterials(ParameterName, FVector(ColorOfTeam));
 }
+
+void ATurretPawn::TurnTurret(const FRotator& InValue) const
+{
+	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
+	TurretMesh->SetWorldRotation(Rotation);
+}

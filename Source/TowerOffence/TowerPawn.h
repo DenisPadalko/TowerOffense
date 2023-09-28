@@ -29,6 +29,10 @@ public:
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
 	void Fire();
+
+	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;
+
+	TObjectPtr<AActor> GetClosestPlayer() const;
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USphereComponent> CollisionSphere = nullptr;
@@ -39,7 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="Default")
 	float TimeBetweenShots = 5.0f;
 	
-	TObjectPtr<AActor> PlayerRef = nullptr;
+	TArray<TObjectPtr<AActor>> PlayerRef;
 private:
 	float TimeAfterLastShot = 1.0f;
 };

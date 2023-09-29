@@ -3,12 +3,12 @@
 
 #include "TowerPawn.h"
 
-#include "Engine/OverlapInfo.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 ATowerPawn::ATowerPawn()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision sphere"));
 	CollisionSphere->SetupAttachment(RootComponent);
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -45,6 +45,7 @@ void ATowerPawn::Tick(float DeltaSeconds)
 			TimeAfterLastShot -= GetWorld()->GetDeltaSeconds();
 		}
 	}
+	DrawDebugSphere(GetWorld(), ProjectileSpawnPoint->GetComponentLocation(), 10.0f, 16, FColor::Red);
 }
 
 void ATowerPawn::GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const

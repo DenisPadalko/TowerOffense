@@ -50,6 +50,7 @@ public:
 	float RotationTolerance = 5.0f;
 private:
 	float TimeAfterLastShot = 1.0f;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TSet<TObjectPtr<AActor>> PlayerRef;
 };

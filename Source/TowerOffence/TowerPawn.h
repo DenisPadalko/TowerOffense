@@ -27,12 +27,19 @@ public:
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex);
 private:
 	void Fire();
 
 	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;
 
 	TObjectPtr<AActor> GetClosestTarget() const;
+
+	float GetDistanceToTarget(const AActor* OtherActor) const;
+
+	float GetSizeOfVector(const FVector& InVector) const;
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USphereComponent> CollisionSphere = nullptr;

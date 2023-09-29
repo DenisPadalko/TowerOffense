@@ -15,6 +15,7 @@ ATowerPawn::ATowerPawn()
 	CollisionSphere->SetVisibility(true);
 
 	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ATowerPawn::OnBeginOverlap);
+	CollisionSphere->OnComponentEndOverlap.AddDynamic(this, &ATowerPawn::OnEndOverlap);
 }
 
 void ATowerPawn::OnConstruction(const FTransform& Transform)
@@ -59,10 +60,10 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 	if(!PlayerRef.IsEmpty())
 	{
 		TObjectPtr<AActor> ClosestTarget = PlayerRef[0];
-		float DistanceToClosestTarget = GetDistanceTo(ClosestTarget);
+		float DistanceToClosestTarget = GetDistanceToTarget(ClosestTarget);
 		for(int i = 1; i < PlayerRef.Num(); ++i)
 		{
-			const float Distance = GetDistanceTo(PlayerRef[i]);
+			const float Distance = GetDistanceToTarget(PlayerRef[i]);
 			if(Distance < DistanceToClosestTarget)
 			{
 				ClosestTarget = PlayerRef[i];
@@ -72,6 +73,16 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 		return ClosestTarget;
 	}
 	return nullptr;
+}
+
+float ATowerPawn::GetDistanceToTarget(const AActor* OtherActor) const
+{
+	return OtherActor ? GetSizeOfVector(GetActorLocation() - OtherActor->GetActorLocation()) : 0.f;
+}
+
+float ATowerPawn::GetSizeOfVector(const FVector& InVector) const
+{
+	return pow(InVector.X, 2) + pow(InVector.Y, 2) + pow(InVector.Z, 2);
 }
 
 void ATowerPawn::SetCollisionSphereRadius() const
@@ -88,6 +99,11 @@ void ATowerPawn::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	IgnoreActors.Init(this, 1);
 	UKismetSystemLibrary::SphereOverlapActors(CollisionSphere, CollisionSphere->GetComponentLocation(),
 		CollisionSphereRadius, TraceObjectTypes, nullptr, IgnoreActors, PlayerRef);
+}
+
+void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex)
+{
+	PlayerRef.RemoveSingle(OtherActor);
 }
 
 void ATowerPawn::Fire()

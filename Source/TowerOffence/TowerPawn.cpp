@@ -35,7 +35,7 @@ void ATowerPawn::Tick(float DeltaSeconds)
 		FRotator Rotation(0.0f);
 		GetRotation(Player, &Rotation);
 		TurnTurret(Rotation);
-		if(TurretMesh->GetPhysicsAngularVelocityInDegrees().Equals(FVector(0.0f)) && TimeAfterLastShot <= 0.0f)
+		if(Rotation.Equals(TurretMesh->GetComponentRotation(), RotationTolerance) && TimeAfterLastShot <= 0.0f)
 		{
 			TimeAfterLastShot = TimeBetweenShots;
 			Fire();
@@ -57,32 +57,27 @@ void ATowerPawn::GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation
 
 TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 {
-	if(!PlayerRef.IsEmpty())
+	if(PlayerRef.IsEmpty())
 	{
-		TObjectPtr<AActor> ClosestTarget = PlayerRef[0];
-		float DistanceToClosestTarget = GetDistanceToTarget(ClosestTarget);
-		for(int i = 1; i < PlayerRef.Num(); ++i)
-		{
-			const float Distance = GetDistanceToTarget(PlayerRef[i]);
-			if(Distance < DistanceToClosestTarget)
-			{
-				ClosestTarget = PlayerRef[i];
-				DistanceToClosestTarget = Distance;
-			}
-		}
-		return ClosestTarget;
+		return nullptr;
 	}
-	return nullptr;
-}
-
-float ATowerPawn::GetDistanceToTarget(const AActor* OtherActor) const
-{
-	return OtherActor ? GetSizeOfVector(GetActorLocation() - OtherActor->GetActorLocation()) : 0.f;
-}
-
-float ATowerPawn::GetSizeOfVector(const FVector& InVector) const
-{
-	return pow(InVector.X, 2) + pow(InVector.Y, 2) + pow(InVector.Z, 2);
+	TObjectPtr<AActor> ClosestTarget = nullptr;
+	float DistanceToClosestTarget = 0.0f;
+	for(const TObjectPtr<AActor> Player : PlayerRef)
+	{
+		if(ClosestTarget == nullptr)
+		{
+			ClosestTarget = Player;
+			DistanceToClosestTarget = GetSquaredDistanceTo(ClosestTarget);
+		}
+		const float Distance = GetSquaredDistanceTo(Player);
+		if(Distance < DistanceToClosestTarget)
+		{
+			ClosestTarget = Player;
+			DistanceToClosestTarget = Distance;
+		}
+	}
+	return ClosestTarget;
 }
 
 void ATowerPawn::SetCollisionSphereRadius() const
@@ -97,13 +92,18 @@ void ATowerPawn::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	TraceObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 	TArray<AActor*> IgnoreActors;
 	IgnoreActors.Init(this, 1);
+	TArray<TObjectPtr<AActor>> OutActors;
 	UKismetSystemLibrary::SphereOverlapActors(CollisionSphere, CollisionSphere->GetComponentLocation(),
-		CollisionSphereRadius, TraceObjectTypes, nullptr, IgnoreActors, PlayerRef);
+		CollisionSphereRadius, TraceObjectTypes, nullptr, IgnoreActors, OutActors);
+	for(const TObjectPtr<AActor> Actor : OutActors)
+	{
+		PlayerRef.Add(Actor);
+	}
 }
 
 void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex)
 {
-	PlayerRef.RemoveSingle(OtherActor);
+	PlayerRef.Remove(OtherActor);
 }
 
 void ATowerPawn::Fire()

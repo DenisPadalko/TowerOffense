@@ -36,10 +36,6 @@ private:
 	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;
 
 	TObjectPtr<AActor> GetClosestTarget() const;
-
-	float GetDistanceToTarget(const AActor* OtherActor) const;
-
-	float GetSizeOfVector(const FVector& InVector) const;
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USphereComponent> CollisionSphere = nullptr;
@@ -49,8 +45,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float TimeBetweenShots = 5.0f;
-	
-	TArray<TObjectPtr<AActor>> PlayerRef;
+
+	UPROPERTY(EditAnywhere, Category="Default")
+	float RotationTolerance = 5.0f;
 private:
 	float TimeAfterLastShot = 1.0f;
+	
+	TSet<TObjectPtr<AActor>> PlayerRef;
 };

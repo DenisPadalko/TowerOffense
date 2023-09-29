@@ -28,24 +28,20 @@ void ATowerPawn::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	const TObjectPtr<AActor> Player = GetClosestPlayer();
+	const TObjectPtr<AActor> Player = GetClosestTarget();
 	if(Player)
 	{
-		const float Distance = GetDistanceTo(Player);
-		if(Distance && Distance <= CollisionSphereRadius)
+		FRotator Rotation(0.0f);
+		GetRotation(Player, &Rotation);
+		TurnTurret(Rotation);
+		if(TurretMesh->GetPhysicsAngularVelocityInDegrees().Equals(FVector(0.0f)) && TimeAfterLastShot <= 0.0f)
 		{
-			FRotator Rotation(0.0f);
-			GetRotation(Player, &Rotation);
-			TurnTurret(Rotation);
-			if(TimeAfterLastShot <= 0.0f)
-			{
-				TimeAfterLastShot = TimeBetweenShots;
-				Fire();
-			}
-			else
-			{
-				TimeAfterLastShot -= GetWorld()->GetDeltaSeconds();
-			}
+			TimeAfterLastShot = TimeBetweenShots;
+			Fire();
+		}
+		else
+		{
+			TimeAfterLastShot -= GetWorld()->GetDeltaSeconds();
 		}
 	}
 }
@@ -58,19 +54,22 @@ void ATowerPawn::GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation
 	Rotation->Yaw -= 90.0f;
 }
 
-TObjectPtr<AActor> ATowerPawn::GetClosestPlayer() const
+TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 {
 	if(!PlayerRef.IsEmpty())
 	{
-		TObjectPtr<AActor> ClosestPlayer = PlayerRef[0];
+		TObjectPtr<AActor> ClosestTarget = PlayerRef[0];
+		float DistanceToClosestTarget = GetDistanceTo(ClosestTarget);
 		for(int i = 1; i < PlayerRef.Num(); ++i)
 		{
-			if(GetDistanceTo(PlayerRef[i]) < GetDistanceTo(ClosestPlayer))
+			const float Distance = GetDistanceTo(PlayerRef[i]);
+			if(Distance < DistanceToClosestTarget)
 			{
-				ClosestPlayer = PlayerRef[i];
+				ClosestTarget = PlayerRef[i];
+				DistanceToClosestTarget = Distance;
 			}
 		}
-		return ClosestPlayer;
+		return ClosestTarget;
 	}
 	return nullptr;
 }

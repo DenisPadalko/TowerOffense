@@ -32,7 +32,7 @@ private:
 
 	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;
 
-	TObjectPtr<AActor> GetClosestPlayer() const;
+	TObjectPtr<AActor> GetClosestTarget() const;
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USphereComponent> CollisionSphere = nullptr;

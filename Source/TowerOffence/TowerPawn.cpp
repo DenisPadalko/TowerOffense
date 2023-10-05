@@ -3,6 +3,7 @@
 
 #include "TowerPawn.h"
 
+#include "Projectile.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -45,7 +46,6 @@ void ATowerPawn::Tick(float DeltaSeconds)
 			TimeAfterLastShot -= GetWorld()->GetDeltaSeconds();
 		}
 	}
-	DrawDebugSphere(GetWorld(), ProjectileSpawnPoint->GetComponentLocation(), 10.0f, 16, FColor::Red);
 }
 
 void ATowerPawn::GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const
@@ -109,6 +109,6 @@ void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void ATowerPawn::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ATowerPawn::Fire() was called"));
+	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
 }
 

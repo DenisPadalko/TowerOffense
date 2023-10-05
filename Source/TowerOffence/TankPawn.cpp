@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Projectile.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ATankPawn::ATankPawn()
@@ -98,5 +99,5 @@ void ATankPawn::Turn(const FInputActionValue& InValue)
 
 void ATankPawn::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fire action was called"));
+	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
 }

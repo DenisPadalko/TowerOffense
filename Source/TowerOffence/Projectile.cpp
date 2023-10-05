@@ -10,6 +10,20 @@ AProjectile::AProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh Component"));
+	StaticMeshComponent->SetupAttachment(RootComponent);
+
+	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
+	ProjectileMovementComponent->bAutoActivate = true;
+
+	StaticMeshComponent->OnComponentHit.AddDynamic(this, &AProjectile::Destroy);
+}
+
+void AProjectile::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	ProjectileMovementComponent->InitialSpeed = SpeedOfMovement;
+	ProjectileMovementComponent->MaxSpeed = SpeedOfMovement;
 }
 
 // Called when the game starts or when spawned
@@ -23,6 +37,10 @@ void AProjectile::BeginPlay()
 void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+void AProjectile::Destroy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+	FVector Impulse, const FHitResult& Hit)
+{
+	AActor::Destroy();
+}

@@ -48,6 +48,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float RotationTolerance = 5.0f;
+	
+	UPROPERTY(EditAnywhere, Category="Default", meta=(GetOptions="BP_Projectile"))
+	TSubclassOf<AActor> ProjectileToSpawn;
 private:
 	float TimeAfterLastShot = 1.0f;
 

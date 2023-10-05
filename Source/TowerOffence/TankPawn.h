@@ -49,6 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float AccelerationDuration = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category="Default", meta=(GetOptions="BP_Projectile"))
+	TSubclassOf<AActor> ProjectileToSpawn;
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputMappingContext> InputMappingContext;

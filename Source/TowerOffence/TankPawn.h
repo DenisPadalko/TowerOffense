@@ -30,10 +30,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void Fire();
-
+	
+private:
 	void Move(const float Direction);
+	
 	float GetCurrentSpeed() const;
+	
 	void FinishMoving();
+	
+	void RotateProjectileSpawnPoint(const float Rotation);
+	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
     TObjectPtr<USpringArmComponent> SpringArmComponent;
@@ -52,6 +58,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default", meta=(GetOptions="BP_Projectile"))
 	TSubclassOf<AActor> ProjectileToSpawn;
+
+	UPROPERTY(EditAnywhere, Category="Default")
+	float TimeBetweenShots = 1.0f;
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -66,4 +75,5 @@ protected:
 	TObjectPtr<UInputAction> FireAction;
 private:
 	float MovementTime = 0.0f;
+	float TimeAfterLastShot = TimeBetweenShots;
 };

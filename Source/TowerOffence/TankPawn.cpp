@@ -48,11 +48,10 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATankPawn::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
-	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
-	FHitResult HitResult;
-	if(PlayerController)
+
+	if(TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController()))
 	{
+		FHitResult HitResult;
 		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(), HitResult.ImpactPoint);
 		Rotation.Roll = 0.0f;
@@ -60,7 +59,10 @@ void ATankPawn::Tick(float DeltaSeconds)
 		Rotation.Yaw -= 90.0f;
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
 		TurnTurret(Rotation);
+		
+		RotateProjectileSpawnPoint(Rotation.Yaw);
 	}
+	TimeAfterLastShot -= DeltaSeconds;
 }
 
 void ATankPawn::InputMove(const FInputActionValue& InValue)
@@ -97,7 +99,27 @@ void ATankPawn::Turn(const FInputActionValue& InValue)
 	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
 }
 
+void ATankPawn::RotateProjectileSpawnPoint( const float Rotation)
+{
+	FVector Dimentions = FVector(0.0f, 293.0f, 27.0f);
+	FVector AxisVector = FVector::UpVector;
+
+	FVector RotationValue = Dimentions.RotateAngleAxis(Rotation, AxisVector);
+
+	FVector NewLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+	NewLocation.X += RotationValue.X;
+	NewLocation.Y += RotationValue.Y;
+	NewLocation.Z += RotationValue.Z;
+
+	FRotator NewRotation = FRotator(0.0f, Rotation + 90.0f, 0.0f);
+	ProjectileSpawnPoint->SetWorldLocationAndRotation(NewLocation, NewRotation);
+}
+
 void ATankPawn::Fire()
 {
-	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
+	if(TimeAfterLastShot <= 0.0f)
+	{
+		GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
+		TimeAfterLastShot = TimeBetweenShots;
+	}
 }

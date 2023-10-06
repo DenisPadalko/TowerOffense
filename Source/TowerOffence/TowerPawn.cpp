@@ -39,7 +39,7 @@ void ATowerPawn::Tick(float DeltaSeconds)
 
 		RotateProjectileSpawnPoint(Rotation.Yaw);
 		
-		if(Rotation.Equals(TurretMesh->GetComponentRotation(), RotationTolerance) && TimeAfterLastShot <= 0.0f)
+		if(FMath::IsNearlyEqual(Rotation.Yaw, TurretMesh->GetComponentRotation().Yaw, RotationTolerance) && TimeAfterLastShot <= 0.0f)
 		{
 			TimeAfterLastShot = TimeBetweenShots;
 			Fire();
@@ -86,12 +86,12 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 
 void ATowerPawn::RotateProjectileSpawnPoint( const float Rotation)
 {
-	FVector Dimentions = FVector(0.0f, 166.0f, 102.0f); 
+	FVector Dimentions = FVector(0.0f, 200.0f, 102.0f); 
 	FVector AxisVector = FVector::UpVector;
 
 	FVector RotationValue = Dimentions.RotateAngleAxis(Rotation, AxisVector);
 
-	FVector NewLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+	FVector NewLocation = GetActorLocation();
 	NewLocation.X += RotationValue.X;
 	NewLocation.Y += RotationValue.Y;
 	NewLocation.Z += RotationValue.Z;

@@ -36,8 +36,6 @@ void ATowerPawn::Tick(float DeltaSeconds)
 		FRotator Rotation(0.0f);
 		GetRotation(Player, &Rotation);
 		TurnTurret(Rotation);
-
-		RotateProjectileSpawnPoint(Rotation.Yaw);
 		
 		if(FMath::IsNearlyEqual(Rotation.Yaw, TurretMesh->GetComponentRotation().Yaw, RotationTolerance) && TimeAfterLastShot <= 0.0f)
 		{
@@ -84,22 +82,6 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 	return ClosestTarget;
 }
 
-void ATowerPawn::RotateProjectileSpawnPoint( const float Rotation)
-{
-	FVector Dimentions = FVector(0.0f, 200.0f, 102.0f); 
-	FVector AxisVector = FVector::UpVector;
-
-	FVector RotationValue = Dimentions.RotateAngleAxis(Rotation, AxisVector);
-
-	FVector NewLocation = GetActorLocation();
-	NewLocation.X += RotationValue.X;
-	NewLocation.Y += RotationValue.Y;
-	NewLocation.Z += RotationValue.Z;
-
-	FRotator NewRotation = FRotator(0.0f, Rotation + 90.0f, 0.0f);
-	ProjectileSpawnPoint->SetWorldLocationAndRotation(NewLocation, NewRotation);
-}
-
 void ATowerPawn::SetCollisionSphereRadius() const
 {
 	CollisionSphere->SetSphereRadius(CollisionSphereRadius);
@@ -126,8 +108,5 @@ void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	PlayerRef.Remove(OtherActor);
 }
 
-void ATowerPawn::Fire()
-{
-	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
-}
+
 

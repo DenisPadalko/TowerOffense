@@ -29,7 +29,7 @@ public:
 	void Turn(const FInputActionValue& InValue);
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
-	void Fire();
+	void CallFire();
 	
 private:
 	void Move(const float Direction);
@@ -37,8 +37,6 @@ private:
 	float GetCurrentSpeed() const;
 	
 	void FinishMoving();
-	
-	void RotateProjectileSpawnPoint(const float Rotation);
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
@@ -55,12 +53,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float AccelerationDuration = 5.0f;
-
-	UPROPERTY(EditAnywhere, Category="Default", meta=(GetOptions="BP_Projectile"))
-	TSubclassOf<AActor> ProjectileToSpawn;
-
-	UPROPERTY(EditAnywhere, Category="Default")
-	float TimeBetweenShots = 1.0f;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -73,7 +66,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputAction> FireAction;
+	
 private:
 	float MovementTime = 0.0f;
-	float TimeAfterLastShot = TimeBetweenShots;
 };

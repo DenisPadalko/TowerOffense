@@ -41,7 +41,7 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Completed, this, &ATankPawn::FinishMoving);
 		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ATankPawn::Turn);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::Fire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::CallFire);
 	}
 }
 
@@ -59,8 +59,6 @@ void ATankPawn::Tick(float DeltaSeconds)
 		Rotation.Yaw -= 90.0f;
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
 		TurnTurret(Rotation);
-		
-		RotateProjectileSpawnPoint(Rotation.Yaw);
 	}
 	TimeAfterLastShot -= DeltaSeconds;
 }
@@ -88,7 +86,6 @@ float ATankPawn::GetCurrentSpeed() const
 	return FMath::Lerp(0.0f, MovementSpeed, Alpha);
 }
 
-
 void ATankPawn::FinishMoving()
 {
 	MovementTime = 0.0f;
@@ -99,27 +96,11 @@ void ATankPawn::Turn(const FInputActionValue& InValue)
 	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
 }
 
-void ATankPawn::RotateProjectileSpawnPoint( const float Rotation)
-{
-	FVector Dimentions = FVector(0.0f, 293.0f, 27.0f);
-	FVector AxisVector = FVector::UpVector;
-
-	FVector RotationValue = Dimentions.RotateAngleAxis(Rotation, AxisVector);
-
-	FVector NewLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	NewLocation.X += RotationValue.X;
-	NewLocation.Y += RotationValue.Y;
-	NewLocation.Z += RotationValue.Z;
-
-	FRotator NewRotation = FRotator(0.0f, Rotation + 90.0f, 0.0f);
-	ProjectileSpawnPoint->SetWorldLocationAndRotation(NewLocation, NewRotation);
-}
-
-void ATankPawn::Fire()
+void ATankPawn::CallFire()
 {
 	if(TimeAfterLastShot <= 0.0f)
 	{
-		GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
+		ATurretPawn::Fire();
 		TimeAfterLastShot = TimeBetweenShots;
 	}
 }

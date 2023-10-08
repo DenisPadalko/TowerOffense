@@ -3,6 +3,8 @@
 
 #include "TurretPawn.h"
 
+#include "Projectile.h"
+
 // Sets default values
 ATurretPawn::ATurretPawn()
 {
@@ -20,6 +22,9 @@ ATurretPawn::ATurretPawn()
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile spawn point"));
 	ProjectileSpawnPoint->SetupAttachment(RootComponent);
+
+	ProjectileSpawnPoint->AttachToComponent(TurretMesh, FAttachmentTransformRules::KeepWorldTransform);
+	AddInstanceComponent(ProjectileSpawnPoint);
 }
 
 TArray<FString> ATurretPawn::GetNameOptions() const
@@ -69,4 +74,16 @@ void ATurretPawn::TurnTurret(const FRotator& InValue) const
 {
 	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
 	TurretMesh->SetWorldRotation(Rotation);
+}
+
+TArray<FString> ATurretPawn::GetProjectileNameOptions() const
+{
+	TArray<FString> Result;
+	Result.Add("BP_Projectile");
+	return Result;
+}
+
+void ATurretPawn::Fire()
+{
+	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
 }

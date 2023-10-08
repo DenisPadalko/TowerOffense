@@ -23,10 +23,16 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	void TurnTurret(const FRotator& InValue) const;
+
+	TArray<FString> GetProjectileNameOptions() const;
+
+	UFUNCTION()
+	void Fire();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,4 +63,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float TurretRotationSpeed = 1.0f;
+	
+	UPROPERTY(EditAnywhere, Category="Default", meta=(GetOptions="GetProjectileNameOptions"))
+	TSubclassOf<AActor> ProjectileToSpawn;
+
+	UPROPERTY(EditAnywhere, Category="Default")
+	float TimeBetweenShots = 5.0f;
+
+	float TimeAfterLastShot = 1.0f;
 };

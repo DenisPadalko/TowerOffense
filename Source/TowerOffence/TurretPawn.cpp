@@ -21,10 +21,7 @@ ATurretPawn::ATurretPawn()
 	TurretMesh->SetupAttachment(RootComponent);
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile spawn point"));
-	ProjectileSpawnPoint->SetupAttachment(RootComponent);
-
-	ProjectileSpawnPoint->AttachToComponent(TurretMesh, FAttachmentTransformRules::KeepWorldTransform);
-	AddInstanceComponent(ProjectileSpawnPoint);
+	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
 }
 
 TArray<FString> ATurretPawn::GetNameOptions() const
@@ -74,13 +71,6 @@ void ATurretPawn::TurnTurret(const FRotator& InValue) const
 {
 	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
 	TurretMesh->SetWorldRotation(Rotation);
-}
-
-TArray<FString> ATurretPawn::GetProjectileNameOptions() const
-{
-	TArray<FString> Result;
-	Result.Add("BP_Projectile");
-	return Result;
 }
 
 void ATurretPawn::Fire()

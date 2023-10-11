@@ -3,7 +3,6 @@
 
 #include "TowerPawn.h"
 
-#include "Projectile.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 

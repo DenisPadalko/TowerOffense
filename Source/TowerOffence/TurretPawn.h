@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InputAction.h"
+#include "Projectile.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Pawn.h"
 #include "TurretPawn.generated.h"
@@ -23,10 +23,16 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	void TurnTurret(const FRotator& InValue) const;
+
+	TArray<FString> GetProjectileNameOptions() const;
+
+	UFUNCTION()
+	void Fire();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -46,6 +52,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USceneComponent> ProjectileSpawnPoint;
 
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<AProjectile> ProjectileToSpawn;
+
 	UPROPERTY(EditDefaultsOnly, Category="Default", meta=(GetOptions = "GetNameOptions"))
 	FName MaterialSlotName = "TeamColor";
 
@@ -57,4 +66,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float TurretRotationSpeed = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category="Default")
+	float TimeBetweenShots = 5.0f;
+
+	float TimeAfterLastShot = 1.0f;
 };

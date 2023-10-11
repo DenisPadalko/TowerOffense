@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputMappingContext.h"
 #include "TurretPawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -29,11 +30,15 @@ public:
 	void Turn(const FInputActionValue& InValue);
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
-	void Fire();
-
+	void CallFire();
+	
+private:
 	void Move(const float Direction);
+	
 	float GetCurrentSpeed() const;
+	
 	void FinishMoving();
+	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
     TObjectPtr<USpringArmComponent> SpringArmComponent;
@@ -49,6 +54,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float AccelerationDuration = 5.0f;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -61,6 +67,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputAction> FireAction;
+	
 private:
 	float MovementTime = 0.0f;
 };

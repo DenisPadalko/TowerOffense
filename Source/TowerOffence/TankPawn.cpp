@@ -40,18 +40,17 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Completed, this, &ATankPawn::FinishMoving);
 		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ATankPawn::Turn);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::Fire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::CallFire);
 	}
 }
 
 void ATankPawn::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
-	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
-	FHitResult HitResult;
-	if(PlayerController)
+
+	if(TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController()))
 	{
+		FHitResult HitResult;
 		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(), HitResult.ImpactPoint);
 		Rotation.Roll = 0.0f;
@@ -60,6 +59,7 @@ void ATankPawn::Tick(float DeltaSeconds)
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
 		TurnTurret(Rotation);
 	}
+	TimeAfterLastShot -= DeltaSeconds;
 }
 
 void ATankPawn::InputMove(const FInputActionValue& InValue)
@@ -85,7 +85,6 @@ float ATankPawn::GetCurrentSpeed() const
 	return FMath::Lerp(0.0f, MovementSpeed, Alpha);
 }
 
-
 void ATankPawn::FinishMoving()
 {
 	MovementTime = 0.0f;
@@ -96,7 +95,11 @@ void ATankPawn::Turn(const FInputActionValue& InValue)
 	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
 }
 
-void ATankPawn::Fire()
+void ATankPawn::CallFire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fire action was called"));
+	if(TimeAfterLastShot <= 0.0f)
+	{
+		ATurretPawn::Fire();
+		TimeAfterLastShot = TimeBetweenShots;
+	}
 }

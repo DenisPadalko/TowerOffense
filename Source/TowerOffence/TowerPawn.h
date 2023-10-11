@@ -31,7 +31,6 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex);
 private:
-	void Fire();
 
 	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;
 
@@ -44,12 +43,9 @@ public:
 	float CollisionSphereRadius = 50.0f;
 
 	UPROPERTY(EditAnywhere, Category="Default")
-	float TimeBetweenShots = 5.0f;
-
-	UPROPERTY(EditAnywhere, Category="Default")
 	float RotationTolerance = 5.0f;
+	
 private:
-	float TimeAfterLastShot = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TSet<TObjectPtr<AActor>> PlayerRef;

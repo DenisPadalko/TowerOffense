@@ -3,12 +3,12 @@
 
 #include "TowerPawn.h"
 
-#include "Engine/OverlapInfo.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 ATowerPawn::ATowerPawn()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision sphere"));
 	CollisionSphere->SetupAttachment(RootComponent);
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -35,7 +35,8 @@ void ATowerPawn::Tick(float DeltaSeconds)
 		FRotator Rotation(0.0f);
 		GetRotation(Player, &Rotation);
 		TurnTurret(Rotation);
-		if(Rotation.Equals(TurretMesh->GetComponentRotation(), RotationTolerance) && TimeAfterLastShot <= 0.0f)
+		
+		if(FMath::IsNearlyEqual(Rotation.Yaw, TurretMesh->GetComponentRotation().Yaw, RotationTolerance) && TimeAfterLastShot <= 0.0f)
 		{
 			TimeAfterLastShot = TimeBetweenShots;
 			Fire();
@@ -106,8 +107,5 @@ void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	PlayerRef.Remove(OtherActor);
 }
 
-void ATowerPawn::Fire()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ATowerPawn::Fire() was called"));
-}
+
 

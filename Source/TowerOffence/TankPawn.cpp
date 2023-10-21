@@ -99,7 +99,7 @@ void ATankPawn::CallFire()
 {
 	if(TimeAfterLastShot <= 0.0f)
 	{
-		ATurretPawn::Fire();
+		Fire();
 		TimeAfterLastShot = TimeBetweenShots;
 	}
 }

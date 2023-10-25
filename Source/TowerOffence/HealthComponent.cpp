@@ -50,7 +50,7 @@ float UHealthComponent::DecreaseHealth(const float DecreaseValue)
 
 bool UHealthComponent::IsZero() const
 {
-	return CurrentHealth == 0.0f;
+	return FMath::IsNearlyZero(CurrentHealth);
 }
 
 void UHealthComponent::OnDamage(AActor* DamagedActor, float DamageTaken, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)

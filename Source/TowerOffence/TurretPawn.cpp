@@ -4,6 +4,7 @@
 #include "TurretPawn.h"
 
 #include "Projectile.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATurretPawn::ATurretPawn()
@@ -86,5 +87,21 @@ void ATurretPawn::CheckHealth()
 	if(HealthComponent->IsZero())
 	{
 		Destroy();
+		CheckWinConditions();
+		Restart();
 	}
 }
+
+void ATurretPawn::Restart()
+{
+	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
+	if(PlayerController->IsInputKeyDown(EKeys::SpaceBar))
+	{
+		UGameplayStatics::OpenLevel(GetLevel(), "Game level");
+	}
+}
+
+void ATurretPawn::CheckWinConditions()
+{
+}
+

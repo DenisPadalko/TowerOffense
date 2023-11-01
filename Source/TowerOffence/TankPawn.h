@@ -23,8 +23,6 @@ public:
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	virtual void BeginPlay() override;
-	
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void InputMove(const FInputActionValue& InValue);
 
@@ -33,8 +31,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void CallFire();
-
-	virtual void CheckHealth() override;
 	
 private:
 	void Move(const float Direction);

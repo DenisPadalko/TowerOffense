@@ -3,7 +3,6 @@
 
 #include "TowerPawn.h"
 
-#include "CustomGameModeBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -25,14 +24,6 @@ void ATowerPawn::OnConstruction(const FTransform& Transform)
 	
 	SetCollisionSphereRadius();
 }
-
-void ATowerPawn::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-	GameMode->AddEnemy();
-} 
 
 void ATowerPawn::Tick(float DeltaSeconds)
 {
@@ -116,12 +107,5 @@ void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	PlayerRef.Remove(OtherActor);
 }
 
-void ATowerPawn::CheckHealth()
-{
-	if(HealthComponent->IsZero())
-	{
-		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-		GameMode->DeleteEnemy();
-	}
-	ATurretPawn::CheckHealth();
-}
+
+

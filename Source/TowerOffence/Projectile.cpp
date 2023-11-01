@@ -2,7 +2,6 @@
 
 
 #include "Projectile.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -43,7 +42,5 @@ void AProjectile::Tick(float DeltaTime)
 void AProjectile::Destroy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
 	FVector Impulse, const FHitResult& Hit)
 {
-	UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, StaticClass());
-	
 	AActor::Destroy();
 }

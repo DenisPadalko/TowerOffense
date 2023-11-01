@@ -21,8 +21,6 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-	virtual void BeginPlay() override;
 	
 	void SetCollisionSphereRadius() const;
 
@@ -32,8 +30,6 @@ public:
 
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex);
-
-	virtual void CheckHealth() override;
 private:
 
 	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;

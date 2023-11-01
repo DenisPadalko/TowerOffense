@@ -3,6 +3,7 @@
 
 #include "TankPawn.h"
 
+#include "CustomGameModeBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -42,6 +43,14 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ATankPawn::Turn);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::CallFire);
 	}
+}
+
+void ATankPawn::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameMode->SetPlayerState(true);
 }
 
 void ATankPawn::Tick(float DeltaSeconds)
@@ -102,4 +111,14 @@ void ATankPawn::CallFire()
 		Fire();
 		TimeAfterLastShot = TimeBetweenShots;
 	}
+}
+
+void ATankPawn::CheckHealth()
+{
+	if(HealthComponent->IsZero())
+	{
+		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+		GameMode->SetPlayerState(false);
+	}
+	ATurretPawn::CheckHealth();
 }

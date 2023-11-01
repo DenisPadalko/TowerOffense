@@ -3,6 +3,7 @@
 
 #include "TurretPawn.h"
 
+#include "CustomGameModeBase.h"
 #include "Projectile.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -87,21 +88,7 @@ void ATurretPawn::CheckHealth()
 	if(HealthComponent->IsZero())
 	{
 		Destroy();
-		CheckWinConditions();
-		Restart();
+		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+		GameMode->CheckWinConditions();
 	}
 }
-
-void ATurretPawn::Restart()
-{
-	TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
-	if(PlayerController->IsInputKeyDown(EKeys::SpaceBar))
-	{
-		UGameplayStatics::OpenLevel(GetLevel(), "Game level");
-	}
-}
-
-void ATurretPawn::CheckWinConditions()
-{
-}
-

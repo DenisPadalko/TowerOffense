@@ -39,7 +39,4 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float SpeedOfMovement = 1.0f;
-
-	UPROPERTY(EditAnywhere, Category="Default")
-	float Damage = 10.0f;
 };

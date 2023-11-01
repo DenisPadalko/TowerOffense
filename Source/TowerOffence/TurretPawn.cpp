@@ -22,9 +22,6 @@ ATurretPawn::ATurretPawn()
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile spawn point"));
 	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
-
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
-	HealthComponent->OnDamageTaken.BindUObject(this, &ATurretPawn::CheckHealth);
 }
 
 TArray<FString> ATurretPawn::GetNameOptions() const
@@ -79,12 +76,4 @@ void ATurretPawn::TurnTurret(const FRotator& InValue) const
 void ATurretPawn::Fire()
 {
 	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
-}
-
-void ATurretPawn::CheckHealth()
-{
-	if(HealthComponent->IsZero())
-	{
-		Destroy();
-	}
 }

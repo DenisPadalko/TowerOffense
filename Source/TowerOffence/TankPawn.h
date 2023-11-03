@@ -34,7 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Functions")
 	void CallFire();
 
-	virtual void CheckHealth() override;
+	virtual void CheckHealth(float CurrentHealth) override;
 	
 private:
 	void Move(const float Direction);

@@ -16,43 +16,23 @@ class TOWEROFFENCE_API ACustomGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	void OnPawnCreated(const APawn* Pawn);
+
+	void OnPawnKilled(const APawn* Pawn);
+
+private:
+	
 	UFUNCTION()
-	void CheckWinConditions();
+	void CheckWinConditions(const APawn* Pawn);
 
 	UFUNCTION()
 	void RestartGame();
-
-	UFUNCTION()
-	void AddEnemy();
-
-	UFUNCTION()
-	void DeleteEnemy();
-
-	UFUNCTION()
-	void SetPlayerState(bool SetPlayerState);
-
-	UFUNCTION()
-	void SpawnWinWidget();
-
-	UFUNCTION()
-	void SpawnLoseWidget();
-
-	UFUNCTION()
-	void DestroyWidget();
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TSubclassOf<UUserWidget> WinWidget = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TSubclassOf<UUserWidget> LoseWidget = nullptr;
-
-	UPROPERTY()
-	TObjectPtr<UUserWidget> WidgetInstance = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, Category="Default")
 	float TimeBeforeRestart = 5.0f;
+	
 private:
-	bool bIsPlayerAlive = true;
-	int EnemiesRemains = 0.0f;
+	bool bIsPlayerAlive = false;
+	int EnemiesRemains = 0;
 };

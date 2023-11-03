@@ -3,86 +3,52 @@
 
 #include "CustomGameModeBase.h"
 
+#include "CustomPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
-void ACustomGameModeBase::CheckWinConditions()
+void ACustomGameModeBase::OnPawnCreated(const APawn* Pawn)
 {
-	if(!bIsPlayerAlive)
+	if(Pawn->IsPawnControlled())
 	{
-		SpawnLoseWidget();
-		FTimerHandle UnusedHandle;
-		GetWorldTimerManager().SetTimer(UnusedHandle, this, &ACustomGameModeBase::RestartGame, TimeBeforeRestart);
+		bIsPlayerAlive = true;
 	}
-	else if(EnemiesRemains == 0)
+	else
 	{
-		SpawnWinWidget();
-		FTimerHandle UnusedHandle;
-		GetWorldTimerManager().SetTimer(UnusedHandle, this, &ACustomGameModeBase::RestartGame, TimeBeforeRestart);
+		++EnemiesRemains;
+	}
+}
+
+void ACustomGameModeBase::OnPawnKilled(const APawn* Pawn)
+{
+	CheckWinConditions(Pawn);
+	
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ACustomGameModeBase::RestartGame, TimeBeforeRestart);
+}
+
+void ACustomGameModeBase::CheckWinConditions(const APawn* Pawn)
+{
+	const TObjectPtr<ACustomPlayerController> PlayerController = Cast<ACustomPlayerController>(GetWorld()->GetFirstPlayerController());
+	
+	if(Pawn->IsPawnControlled())
+	{
+		bIsPlayerAlive = false;
+		PlayerController->SpawnLoseWidget();
+	}
+	else
+	{
+		--EnemiesRemains;
+	}
+	if(!EnemiesRemains)
+	{
+		PlayerController->SpawnWinWidget();
 	}
 }
 
 void ACustomGameModeBase::RestartGame()
 {
-	//const TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
-	//if(PlayerController->IsInputKeyDown(EKeys::SpaceBar))
-	//{
-		DestroyWidget();
-		UGameplayStatics::OpenLevel(GetLevel(), "Game level");
-	//}
-}
-
-void ACustomGameModeBase::AddEnemy()
-{
-	++EnemiesRemains;
-}
-
-void ACustomGameModeBase::DeleteEnemy()
-{
-	--EnemiesRemains;
-}
-
-
-void ACustomGameModeBase::SetPlayerState(bool PlayerState)
-{
-	bIsPlayerAlive = PlayerState;
-}
-
-
-void ACustomGameModeBase::SpawnWinWidget()
-{
-	if(WinWidget)
-	{
-		if(!WidgetInstance)
-		{
-			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), WinWidget);
-		}
-		if(!WidgetInstance->IsInViewport())
-		{
-			WidgetInstance->AddToViewport(9999);
-		}
-	}
-}
-
-void ACustomGameModeBase::SpawnLoseWidget()
-{
-	if(LoseWidget)
-	{
-		if(!WidgetInstance)
-		{
-			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), LoseWidget);
-		}
-		if(!WidgetInstance->IsInViewport())
-		{
-			WidgetInstance->AddToViewport(9999);
-		}
-	}
-}
-
-void ACustomGameModeBase::DestroyWidget()
-{
-	if(WidgetInstance)
-	{
-		WidgetInstance->RemoveFromParent();
-		WidgetInstance = nullptr;
-	}
+	const TObjectPtr<ACustomPlayerController> PlayerController = Cast<ACustomPlayerController>(GetWorld()->GetFirstPlayerController());
+	
+	PlayerController->DestroyWidget();
+	UGameplayStatics::OpenLevel(GetLevel(), "Game level");
 }

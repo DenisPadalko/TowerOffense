@@ -19,4 +19,24 @@ public:
 	
 	UFUNCTION()
 	void SetPlayerEnabledState();
+
+	UFUNCTION()
+	void SpawnWinWidget();
+
+	UFUNCTION()
+	void SpawnLoseWidget();
+
+	UFUNCTION()
+	void DestroyWidget();
+	
+private:
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UUserWidget> WinWidget = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UUserWidget> LoseWidget = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> WidgetInstance = nullptr;
 };

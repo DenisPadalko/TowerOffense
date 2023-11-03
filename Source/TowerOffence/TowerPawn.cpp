@@ -31,7 +31,7 @@ void ATowerPawn::BeginPlay()
 	Super::BeginPlay();
 	
 	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-	GameMode->AddEnemy();
+	GameMode->OnPawnCreated(this);
 } 
 
 void ATowerPawn::Tick(float DeltaSeconds)
@@ -116,12 +116,12 @@ void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	PlayerRef.Remove(OtherActor);
 }
 
-void ATowerPawn::CheckHealth()
+void ATowerPawn::CheckHealth(float CurrentHealth)
 {
+	Super::CheckHealth(CurrentHealth);
 	if(HealthComponent->IsZero())
 	{
-		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-		GameMode->DeleteEnemy();
+		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+		GameMode->OnPawnKilled(this);
 	}
-	ATurretPawn::CheckHealth();
 }

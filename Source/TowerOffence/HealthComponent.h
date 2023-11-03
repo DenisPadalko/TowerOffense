@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DELEGATE(OnDamageTakenDelegate)
+DECLARE_DELEGATE_OneParam(OnDamageTakenDelegate, float)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TOWEROFFENCE_API UHealthComponent : public UActorComponent
@@ -22,9 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	float GetCurrentHealth() const;
 
 	float DecreaseHealth(const float DecreaseValue);

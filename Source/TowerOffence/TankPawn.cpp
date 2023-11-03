@@ -2,7 +2,6 @@
 
 
 #include "TankPawn.h"
-
 #include "CustomGameModeBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -50,7 +49,7 @@ void ATankPawn::BeginPlay()
 	Super::BeginPlay();
 	
 	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-	GameMode->SetPlayerState(true);
+	GameMode->OnPawnCreated(this);
 }
 
 void ATankPawn::Tick(float DeltaSeconds)
@@ -113,12 +112,12 @@ void ATankPawn::CallFire()
 	}
 }
 
-void ATankPawn::CheckHealth()
+void ATankPawn::CheckHealth(float CurrentHealth)
 {
 	if(HealthComponent->IsZero())
 	{
 		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-		GameMode->SetPlayerState(false);
+		GameMode->OnPawnKilled(this);
 	}
-	ATurretPawn::CheckHealth();
+	ATurretPawn::CheckHealth(CurrentHealth);
 }

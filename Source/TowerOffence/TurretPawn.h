@@ -31,7 +31,7 @@ public:
 	void Fire();
 
 	UFUNCTION()
-	virtual void CheckHealth();
+	virtual void CheckHealth(float CurrentHealth);
 	
 protected:
 	// Called when the game starts or when spawned

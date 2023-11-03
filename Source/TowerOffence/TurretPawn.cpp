@@ -83,12 +83,10 @@ void ATurretPawn::Fire()
 	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
 }
 
-void ATurretPawn::CheckHealth()
+void ATurretPawn::CheckHealth(float CurrentHealth)
 {
-	if(HealthComponent->IsZero())
+	if(FMath::IsNearlyZero(CurrentHealth))
 	{
 		Destroy();
-		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-		GameMode->CheckWinConditions();
 	}
 }

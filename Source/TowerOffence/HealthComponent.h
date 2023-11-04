@@ -24,7 +24,7 @@ protected:
 public:	
 	float GetCurrentHealth() const;
 
-	float DecreaseHealth(const float DecreaseValue);
+	float ChangeHealth(const float ChangeValue);
 
 	bool IsZero() const;
 

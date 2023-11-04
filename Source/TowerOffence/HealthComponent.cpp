@@ -25,9 +25,9 @@ float UHealthComponent::GetCurrentHealth() const
 	return CurrentHealth;
 }
 
-float UHealthComponent::DecreaseHealth(const float DecreaseValue)
+float UHealthComponent::ChangeHealth(const float ChangeValue)
 {
-	CurrentHealth -= DecreaseValue;
+	CurrentHealth += ChangeValue;
 	if(CurrentHealth < 0.0f)
 	{
 		CurrentHealth = 0.0f;
@@ -42,7 +42,7 @@ bool UHealthComponent::IsZero() const
 
 void UHealthComponent::OnDamage(AActor* DamagedActor, float DamageTaken, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	DecreaseHealth(DamageTaken);
+	ChangeHealth(DamageTaken);
 
 	UE_LOG(LogTemp, Warning, TEXT("Health: %f"), CurrentHealth);
 	OnDamageTaken.Execute(CurrentHealth);

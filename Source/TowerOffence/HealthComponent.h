@@ -33,9 +33,9 @@ public:
 	
 public:
 	UPROPERTY(EditAnywhere, Category="Default")
-	float DefaultHealth = 100.0f;
+	float MaxHealth = 100.0f;
 
-	float CurrentHealth = DefaultHealth;
+	float CurrentHealth = MaxHealth;
 
 	OnDamageTakenDelegate OnDamageTaken;
 };

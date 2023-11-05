@@ -28,10 +28,7 @@ float UHealthComponent::GetCurrentHealth() const
 float UHealthComponent::ChangeHealth(const float ChangeValue)
 {
 	CurrentHealth += ChangeValue;
-	if(CurrentHealth < 0.0f)
-	{
-		CurrentHealth = 0.0f;
-	}
+	CurrentHealth = FMath::Clamp(CurrentHealth, 0, MaxHealth);
 	return CurrentHealth;
 }
 

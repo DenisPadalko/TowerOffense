@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HealthComponent.h"
 #include "Projectile.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Pawn.h"
@@ -28,6 +29,9 @@ public:
 
 	UFUNCTION()
 	void Fire();
+
+	UFUNCTION()
+	virtual void CheckHealth(float CurrentHealth);
 	
 protected:
 	// Called when the game starts or when spawned
@@ -48,6 +52,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UStaticMeshComponent> TurretMesh;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UHealthComponent> HealthComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USceneComponent> ProjectileSpawnPoint;

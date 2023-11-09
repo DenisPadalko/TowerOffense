@@ -21,7 +21,7 @@ public:
 
 	void OnPawnKilled(const APawn* Pawn);
 
-	virtual void BeginPlay() override;
+	void OnBeginPlay();
 
 private:
 	

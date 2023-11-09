@@ -6,7 +6,7 @@
 #include "CustomPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
-void ACustomGameModeBase::BeginPlay() 
+void ACustomGameModeBase::OnBeginPlay() 
 {
 	Super::BeginPlay();
 
@@ -18,7 +18,7 @@ void ACustomGameModeBase::BeginPlay()
 
 void ACustomGameModeBase::OnPawnCreated(const APawn* Pawn)
 {
-	if(Pawn->IsPawnControlled())
+	if(Pawn == UGameplayStatics::GetPlayerPawn(this, 0))
 	{
 		bIsPlayerAlive = true;
 	}

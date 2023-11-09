@@ -4,24 +4,20 @@
 #include "CustomPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 
 ACustomPlayerController::ACustomPlayerController()
 {
 }
 
-void ACustomPlayerController::OnBeginPlay(float DelayTime)
-{
-	
-}
-
 void ACustomPlayerController::SetPlayerEnabledState()
 {
-	EnableInput(Cast<APlayerController>(this));
+	UGameplayStatics::GetPlayerPawn(this, 0)->EnableInput(Cast<APlayerController>(this));
 }
 
 void ACustomPlayerController::SetPlayerDisabledState()
 {
-	DisableInput(Cast<APlayerController>(this));
+	UGameplayStatics::GetPlayerPawn(this, 0)->DisableInput(Cast<APlayerController>(this));
 }
 
 void ACustomPlayerController::SpawnWinWidget()

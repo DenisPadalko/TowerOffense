@@ -16,8 +16,6 @@ class TOWEROFFENCE_API ACustomPlayerController : public APlayerController
 
 public:
 	ACustomPlayerController();
-
-	void OnBeginPlay(float DelayTime);
 	
 	UFUNCTION()
 	void SetPlayerEnabledState();

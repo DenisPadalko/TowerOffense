@@ -6,6 +6,16 @@
 #include "CustomPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
+void ACustomGameModeBase::BeginPlay() 
+{
+	Super::BeginPlay();
+
+	CreateStartWidget();
+	
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ACustomGameModeBase::DestroyStartWidget, DelayBeforeStart);
+}
+
 void ACustomGameModeBase::OnPawnCreated(const APawn* Pawn)
 {
 	if(Pawn->IsPawnControlled())
@@ -51,4 +61,20 @@ void ACustomGameModeBase::RestartGame()
 	
 	PlayerController->DestroyWidget();
 	UGameplayStatics::OpenLevel(GetLevel(), "Game level");
+}
+
+void ACustomGameModeBase::CreateStartWidget() const
+{
+	const TObjectPtr<ACustomPlayerController> PlayerController = Cast<ACustomPlayerController>(GetWorld()->GetFirstPlayerController());
+	
+	PlayerController->SetPlayerDisabledState();
+	PlayerController->SpawnBeforeStartWidget();
+}
+
+void ACustomGameModeBase::DestroyStartWidget() const
+{
+	const TObjectPtr<ACustomPlayerController> PlayerController = Cast<ACustomPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	PlayerController->DestroyWidget();
+	PlayerController->SetPlayerEnabledState();
 }

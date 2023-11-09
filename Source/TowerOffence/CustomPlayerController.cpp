@@ -9,9 +9,19 @@ ACustomPlayerController::ACustomPlayerController()
 {
 }
 
+void ACustomPlayerController::OnBeginPlay(float DelayTime)
+{
+	
+}
+
 void ACustomPlayerController::SetPlayerEnabledState()
 {
-	PlayerState->EnableInput(this);
+	EnableInput(Cast<APlayerController>(this));
+}
+
+void ACustomPlayerController::SetPlayerDisabledState()
+{
+	DisableInput(Cast<APlayerController>(this));
 }
 
 void ACustomPlayerController::SpawnWinWidget()
@@ -36,6 +46,21 @@ void ACustomPlayerController::SpawnLoseWidget()
 		if(!WidgetInstance)
 		{
 			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), LoseWidget);
+		}
+		if(!WidgetInstance->IsInViewport())
+		{
+			WidgetInstance->AddToViewport(9999);
+		}
+	}
+}
+
+void ACustomPlayerController::SpawnBeforeStartWidget()
+{
+	if(BeforeStartWidget)
+	{
+		if(!WidgetInstance)
+		{
+			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), BeforeStartWidget);
 		}
 		if(!WidgetInstance->IsInViewport())
 		{

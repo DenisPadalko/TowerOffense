@@ -16,9 +16,14 @@ class TOWEROFFENCE_API ACustomPlayerController : public APlayerController
 
 public:
 	ACustomPlayerController();
+
+	void OnBeginPlay(float DelayTime);
 	
 	UFUNCTION()
 	void SetPlayerEnabledState();
+
+	UFUNCTION()
+	void SetPlayerDisabledState();
 
 	UFUNCTION()
 	void SpawnWinWidget();
@@ -26,6 +31,9 @@ public:
 	UFUNCTION()
 	void SpawnLoseWidget();
 
+	UFUNCTION()
+	void SpawnBeforeStartWidget();
+	
 	UFUNCTION()
 	void DestroyWidget();
 	
@@ -36,6 +44,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TSubclassOf<UUserWidget> LoseWidget = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UUserWidget> BeforeStartWidget = nullptr;
 
 	UPROPERTY()
 	TObjectPtr<UUserWidget> WidgetInstance = nullptr;

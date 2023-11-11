@@ -39,7 +39,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	float TimeBeforeRestart = 5.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category="Default")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Default")
 	float DelayBeforeStart = 5.0f;
 	
 private:

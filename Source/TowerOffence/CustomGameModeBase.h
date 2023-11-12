@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CustomPlayerController.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/GameModeBase.h"
 #include "CustomGameModeBase.generated.h"
@@ -15,10 +16,12 @@ class TOWEROFFENCE_API ACustomGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
+public:	
 	void OnPawnCreated(const APawn* Pawn);
 
 	void OnPawnKilled(const APawn* Pawn);
+
+	void OnBeginPlay();
 
 private:
 	
@@ -27,10 +30,17 @@ private:
 
 	UFUNCTION()
 	void RestartGame();
+
+	void CreateStartWidget() const;
+
+	void DestroyStartWidget() const;
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	float TimeBeforeRestart = 5.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Default")
+	float DelayBeforeStart = 5.0f;
 	
 private:
 	bool bIsPlayerAlive = false;

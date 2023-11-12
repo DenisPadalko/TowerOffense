@@ -50,6 +50,8 @@ void ATankPawn::BeginPlay()
 	
 	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
 	GameMode->OnPawnCreated(this);
+
+	GameMode->OnBeginPlay();
 }
 
 void ATankPawn::Tick(float DeltaSeconds)

@@ -21,11 +21,17 @@ public:
 	void SetPlayerEnabledState();
 
 	UFUNCTION()
+	void SetPlayerDisabledState();
+
+	UFUNCTION()
 	void SpawnWinWidget();
 
 	UFUNCTION()
 	void SpawnLoseWidget();
 
+	UFUNCTION()
+	void SpawnBeforeStartWidget();
+	
 	UFUNCTION()
 	void DestroyWidget();
 	
@@ -36,6 +42,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TSubclassOf<UUserWidget> LoseWidget = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UUserWidget> BeforeStartWidget = nullptr;
 
 	UPROPERTY()
 	TObjectPtr<UUserWidget> WidgetInstance = nullptr;

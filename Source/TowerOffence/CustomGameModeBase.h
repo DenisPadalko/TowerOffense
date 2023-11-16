@@ -23,6 +23,14 @@ public:
 
 	void OnBeginPlay();
 
+	void SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnHitParticle(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnDeathParticle(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnDustFromTank(const TObjectPtr<USceneComponent> AttachToComponent);
+
 private:
 	
 	UFUNCTION()
@@ -34,6 +42,8 @@ private:
 	void CreateStartWidget() const;
 
 	void DestroyStartWidget() const;
+
+	//void DestroyDustFromTank();
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
@@ -41,8 +51,22 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Default")
 	float DelayBeforeStart = 5.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> ShootParticle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> HitParticle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> DeathParticle = nullptr;
+
+	//UPROPERTY(EditDefaultsOnly, Category="Default")
+	//TObjectPtr<UParticleSystem> DustFromTank = nullptr;
 	
 private:
 	bool bIsPlayerAlive = false;
 	int EnemiesRemains = 0;
+
+	//UParticleSystemComponent* DustFromTankComponent = nullptr;
 };

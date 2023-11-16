@@ -4,6 +4,7 @@
 #include "TowerPawn.h"
 
 #include "CustomGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -119,9 +120,9 @@ void ATowerPawn::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 void ATowerPawn::CheckHealth(float CurrentHealth)
 {
 	Super::CheckHealth(CurrentHealth);
-	if(HealthComponent->IsZero())
+	if(FMath::IsNearlyZero(CurrentHealth))
 	{
-		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
 	}
 }

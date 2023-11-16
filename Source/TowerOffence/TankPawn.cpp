@@ -5,6 +5,7 @@
 #include "CustomGameModeBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ATankPawn::ATankPawn()
@@ -87,6 +88,9 @@ void ATankPawn::Move(const float Direction)
 
 	const FVector DeltaMove = Velocity * DeltaTime;
 	AddActorLocalOffset(DeltaMove);
+
+	//const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	//GameMode->SpawnDustFromTank(CapsuleComponent);
 }
 
 float ATankPawn::GetCurrentSpeed() const
@@ -116,10 +120,10 @@ void ATankPawn::CallFire()
 
 void ATankPawn::CheckHealth(float CurrentHealth)
 {
-	if(HealthComponent->IsZero())
+	if(FMath::IsNearlyZero(CurrentHealth))
 	{
-		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
 	}
-	ATurretPawn::CheckHealth(CurrentHealth);
+	Super::CheckHealth(CurrentHealth);
 }

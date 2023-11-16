@@ -5,6 +5,7 @@
 
 #include "CustomPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 void ACustomGameModeBase::OnBeginPlay() 
 {
@@ -78,3 +79,37 @@ void ACustomGameModeBase::DestroyStartWidget() const
 	PlayerController->DestroyWidget();
 	PlayerController->SetPlayerEnabledState();
 }
+
+void ACustomGameModeBase::SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShootParticle, Location, Rotation);
+}
+
+void ACustomGameModeBase::SpawnHitParticle(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, Location, Rotation);
+}
+
+void ACustomGameModeBase::SpawnDeathParticle(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathParticle, Location, Rotation);
+}
+/*
+void ACustomGameModeBase::SpawnDustFromTank(const TObjectPtr<USceneComponent> AttachToComponent)
+{
+	//FVector SpawnLocation = Location;
+	//SpawnLocation.Z -= 25.0f;
+	//DustFromTankComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DustFromTank, SpawnLocation, Rotation);
+
+	//FTimerHandle UnusedHandle;
+	//GetWorldTimerManager().SetTimer(UnusedHandle, this,  &ACustomGameModeBase::DestroyDustFromTank, 1.0f);
+
+	DustFromTankComponent = UGameplayStatics::SpawnEmitterAttached(DustFromTank, AttachToComponent);
+}
+
+void ACustomGameModeBase::DestroyDustFromTank()
+{
+	DustFromTankComponent->DeactivateSystem();
+	DustFromTankComponent->DestroyComponent();
+}
+*/

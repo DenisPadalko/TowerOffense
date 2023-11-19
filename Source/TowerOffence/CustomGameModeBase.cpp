@@ -97,6 +97,10 @@ void ACustomGameModeBase::SpawnDeathParticle(const FVector& Location, const FRot
 
 void ACustomGameModeBase::SpawnDustFromTank(const TArray<TObjectPtr<USceneComponent>> AttachToComponent)
 {
+	if(LeftDustFromTankComponent || RightDustFromTankComponent)
+	{
+		return;
+	}
 	SpawnLeftDustFromTankComponent(AttachToComponent[0]);
 	SpawnRightDustFromTankComponent(AttachToComponent[1]);
 }
@@ -122,9 +126,11 @@ void ACustomGameModeBase::DestroyDustFromTank()
 	if(LeftDustFromTankComponent)
 	{
 		LeftDustFromTankComponent->Deactivate();
+		LeftDustFromTankComponent = nullptr;
 	}
 	if(RightDustFromTankComponent)
 	{
 		RightDustFromTankComponent->Deactivate();
+		RightDustFromTankComponent = nullptr;
 	}
 }

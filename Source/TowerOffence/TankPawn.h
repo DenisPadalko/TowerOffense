@@ -42,6 +42,8 @@ private:
 	float GetCurrentSpeed() const;
 	
 	void FinishMoving();
+
+	void FinishTurn();
 	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
@@ -49,6 +51,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USceneComponent> LeftDustSpawnPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USceneComponent> RightDustSpawnPoint;
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float MovementSpeed = 50.0f;

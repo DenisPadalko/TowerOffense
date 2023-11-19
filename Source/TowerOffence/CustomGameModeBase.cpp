@@ -94,22 +94,41 @@ void ACustomGameModeBase::SpawnDeathParticle(const FVector& Location, const FRot
 {
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathParticle, Location, Rotation);
 }
-/*
-void ACustomGameModeBase::SpawnDustFromTank(const TObjectPtr<USceneComponent> AttachToComponent)
+
+void ACustomGameModeBase::SpawnDustFromTank(const TArray<TObjectPtr<USceneComponent>> AttachToComponent)
 {
-	//FVector SpawnLocation = Location;
-	//SpawnLocation.Z -= 25.0f;
-	//DustFromTankComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DustFromTank, SpawnLocation, Rotation);
+	if(LeftDustFromTankComponent || RightDustFromTankComponent)
+	{
+		return;
+	}
+	SpawnLeftDustFromTankComponent(AttachToComponent[0]);
+	SpawnRightDustFromTankComponent(AttachToComponent[1]);
+}
 
-	//FTimerHandle UnusedHandle;
-	//GetWorldTimerManager().SetTimer(UnusedHandle, this,  &ACustomGameModeBase::DestroyDustFromTank, 1.0f);
+void ACustomGameModeBase::SpawnLeftDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent)
+{
+	LeftDustFromTankComponent = UGameplayStatics::SpawnEmitterAttached(DustFromTank, AttachToComponent, FName("Dust point"),
+		FVector(ForceInit), FRotator::ZeroRotator, FVector(1), EAttachLocation::KeepRelativeOffset,
+		false, EPSCPoolMethod::None, false);
+	LeftDustFromTankComponent->Activate(true);
+}
 
-	DustFromTankComponent = UGameplayStatics::SpawnEmitterAttached(DustFromTank, AttachToComponent);
+void ACustomGameModeBase::SpawnRightDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent)
+{
+	RightDustFromTankComponent = UGameplayStatics::SpawnEmitterAttached(DustFromTank, AttachToComponent, FName("Dust point"),
+		FVector(ForceInit), FRotator::ZeroRotator, FVector(1), EAttachLocation::KeepRelativeOffset,
+		false, EPSCPoolMethod::None, false);
+	RightDustFromTankComponent->Activate(true);
 }
 
 void ACustomGameModeBase::DestroyDustFromTank()
 {
-	DustFromTankComponent->DeactivateSystem();
-	DustFromTankComponent->DestroyComponent();
+	if(LeftDustFromTankComponent)
+	{
+		LeftDustFromTankComponent->Deactivate();
+	}
+	if(RightDustFromTankComponent)
+	{
+		RightDustFromTankComponent->Deactivate();
+	}
 }
-*/

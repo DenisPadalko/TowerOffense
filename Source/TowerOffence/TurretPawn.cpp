@@ -29,6 +29,14 @@ ATurretPawn::ATurretPawn()
 	HealthComponent->OnDamageTaken.BindUObject(this, &ATurretPawn::CheckHealth);
 }
 
+void ATurretPawn::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	GameMode->SpawnHitParticle(HitLocation, FRotator::ZeroRotator);
+}
+
 TArray<FString> ATurretPawn::GetNameOptions() const
 {
 	TArray<FName> MaterialSlotNames = TurretMesh->GetMaterialSlotNames();
@@ -81,6 +89,9 @@ void ATurretPawn::TurnTurret(const FRotator& InValue) const
 void ATurretPawn::Fire()
 {
 	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
+
+	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameMode->SpawnShootParticle(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 }
 
 void ATurretPawn::CheckHealth(float CurrentHealth)
@@ -88,5 +99,8 @@ void ATurretPawn::CheckHealth(float CurrentHealth)
 	if(FMath::IsNearlyZero(CurrentHealth))
 	{
 		Destroy();
+
+		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+		GameMode->SpawnDeathParticle(GetActorLocation(), GetActorRotation());
 	}
 }

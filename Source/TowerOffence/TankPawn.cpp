@@ -5,6 +5,7 @@
 #include "CustomGameModeBase.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ATankPawn::ATankPawn()
@@ -18,6 +19,12 @@ ATankPawn::ATankPawn()
 	Camera->SetupAttachment(SpringArmComponent);
 
 	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	LeftDustSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Left dust spawn point"));
+	LeftDustSpawnPoint->SetupAttachment(BaseMesh);
+
+	RightDustSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Right dust spawn point"));
+	RightDustSpawnPoint->SetupAttachment(BaseMesh);
 }
 
 void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -40,6 +47,7 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Completed, this, &ATankPawn::FinishMoving);
 		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Triggered, this, &ATankPawn::Turn);
+		EnhancedInputComponent->BindAction(TurnRightAction, ETriggerEvent::Completed, this, &ATankPawn::FinishTurn);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ATankPawn::CallFire);
 	}
 }
@@ -87,6 +95,9 @@ void ATankPawn::Move(const float Direction)
 
 	const FVector DeltaMove = Velocity * DeltaTime;
 	AddActorLocalOffset(DeltaMove);
+
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	GameMode->SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
 }
 
 float ATankPawn::GetCurrentSpeed() const
@@ -98,12 +109,25 @@ float ATankPawn::GetCurrentSpeed() const
 void ATankPawn::FinishMoving()
 {
 	MovementTime = 0.0f;
+
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	GameMode->DestroyDustFromTank();
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
 {
 	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
+	
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	GameMode->SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
 }
+
+void ATankPawn::FinishTurn()
+{
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	GameMode->DestroyDustFromTank();
+}
+
 
 void ATankPawn::CallFire()
 {
@@ -116,10 +140,10 @@ void ATankPawn::CallFire()
 
 void ATankPawn::CheckHealth(float CurrentHealth)
 {
-	if(HealthComponent->IsZero())
+	if(FMath::IsNearlyZero(CurrentHealth))
 	{
-		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
+		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
 	}
-	ATurretPawn::CheckHealth(CurrentHealth);
+	Super::CheckHealth(CurrentHealth);
 }

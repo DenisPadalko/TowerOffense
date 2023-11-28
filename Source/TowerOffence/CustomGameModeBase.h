@@ -35,6 +35,12 @@ public:
 
 	void SpawnRightDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent);
 
+	void SpawnShootSound(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnHitSound(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnOnDeathSound(const FVector& Location, const FRotator& Rotation) const;
+	
 	void DestroyDustFromTank();
 
 private:
@@ -67,6 +73,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UParticleSystem> DustFromTank = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> ShootSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> HitSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> OnDeathSound = nullptr;
 	
 private:
 	bool bIsPlayerAlive = false;

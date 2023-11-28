@@ -35,6 +35,7 @@ void ATurretPawn::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->SpawnHitParticle(HitLocation, FRotator::ZeroRotator);
+	GameMode->SpawnHitSound(HitLocation, FRotator::ZeroRotator);
 }
 
 TArray<FString> ATurretPawn::GetNameOptions() const
@@ -92,6 +93,7 @@ void ATurretPawn::Fire()
 
 	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
 	GameMode->SpawnShootParticle(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+	GameMode->SpawnShootSound(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 }
 
 void ATurretPawn::CheckHealth(float CurrentHealth)
@@ -102,5 +104,6 @@ void ATurretPawn::CheckHealth(float CurrentHealth)
 
 		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->SpawnDeathParticle(GetActorLocation(), GetActorRotation());
+		GameMode->SpawnOnDeathSound(GetActorLocation(), GetActorRotation());
 	}
 }

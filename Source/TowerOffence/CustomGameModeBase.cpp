@@ -121,6 +121,21 @@ void ACustomGameModeBase::SpawnRightDustFromTankComponent(const TObjectPtr<UScen
 	RightDustFromTankComponent->Activate(true);
 }
 
+void ACustomGameModeBase::SpawnHitSound(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), HitSound, Location, Rotation);
+}
+
+void ACustomGameModeBase::SpawnShootSound(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), ShootSound, Location, Rotation);
+}
+
+void ACustomGameModeBase::SpawnOnDeathSound(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), OnDeathSound, Location, Rotation);
+}
+
 void ACustomGameModeBase::DestroyDustFromTank()
 {
 	if(LeftDustFromTankComponent)

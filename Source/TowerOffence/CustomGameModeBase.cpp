@@ -4,6 +4,7 @@
 #include "CustomGameModeBase.h"
 
 #include "CustomPlayerController.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -15,6 +16,13 @@ void ACustomGameModeBase::OnBeginPlay()
 	
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ACustomGameModeBase::DestroyStartWidget, DelayBeforeStart);
+}
+
+void ACustomGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	DestroyAmbientSound();
 }
 
 void ACustomGameModeBase::OnPawnCreated(const APawn* Pawn)
@@ -136,6 +144,39 @@ void ACustomGameModeBase::SpawnOnDeathSound(const FVector& Location, const FRota
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), OnDeathSound, Location, Rotation);
 }
 
+void ACustomGameModeBase::SpawnTurretTurningSound(const FVector& Location, const FRotator& Rotation)
+{
+	TurretTurningSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), TurretTurningSound, Location, Rotation);
+}
+
+void ACustomGameModeBase::SpawnMovementSound(const FVector& Location, const FRotator& Rotation)
+{
+	MovementSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), MovementSound, Location, Rotation);
+}
+
+void ACustomGameModeBase::SpawnAmbientSound(const FVector& Location, const FRotator& Rotation)
+{
+	AmbientSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AmbientSound, Location, Rotation);
+}
+
+void ACustomGameModeBase::DestroyTurretTurningSound()
+{
+	TurretTurningSoundComponent->Deactivate();
+	TurretTurningSoundComponent = nullptr;
+}
+
+void ACustomGameModeBase::DestroyMovementSound()
+{
+	MovementSoundComponent->Deactivate();
+	MovementSoundComponent = nullptr;
+}
+
+void ACustomGameModeBase::DestroyAmbientSound()
+{
+	AmbientSoundComponent->Deactivate();
+	AmbientSoundComponent = nullptr;
+}
+
 void ACustomGameModeBase::DestroyDustFromTank()
 {
 	if(LeftDustFromTankComponent)
@@ -148,4 +189,14 @@ void ACustomGameModeBase::DestroyDustFromTank()
 		RightDustFromTankComponent->Deactivate();
 		RightDustFromTankComponent = nullptr;
 	}
+}
+
+bool ACustomGameModeBase::IsTurretTurningSoundSpawned() const
+{
+	return TurretTurningSoundComponent != nullptr;
+}
+
+bool ACustomGameModeBase::IsMovementSoundSpawned() const
+{
+	return MovementSoundComponent != nullptr;
 }

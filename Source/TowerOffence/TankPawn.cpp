@@ -98,6 +98,11 @@ void ATankPawn::Move(const float Direction)
 
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
+
+	if(!GameMode->IsMovementSoundSpawned())
+	{
+		GameMode->SpawnMovementSound(GetActorLocation(), GetActorRotation());
+	}
 }
 
 float ATankPawn::GetCurrentSpeed() const
@@ -112,6 +117,8 @@ void ATankPawn::FinishMoving()
 
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->DestroyDustFromTank();
+
+	GameMode->DestroyMovementSound();
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
@@ -120,12 +127,19 @@ void ATankPawn::Turn(const FInputActionValue& InValue)
 	
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
+
+	if(!GameMode->IsMovementSoundSpawned())
+	{
+		GameMode->SpawnMovementSound(GetActorLocation(), GetActorRotation());
+	}
 }
 
 void ATankPawn::FinishTurn()
 {
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->DestroyDustFromTank();
+
+	GameMode->DestroyMovementSound();
 }
 
 

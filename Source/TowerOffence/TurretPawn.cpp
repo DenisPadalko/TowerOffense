@@ -53,7 +53,9 @@ TArray<FString> ATurretPawn::GetNameOptions() const
 void ATurretPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	GameMode->SpawnAmbientSound(GetActorLocation(), GetActorRotation());
 }
 
 // Called every frame
@@ -84,7 +86,22 @@ void ATurretPawn::PostInitializeComponents()
 void ATurretPawn::TurnTurret(const FRotator& InValue) const
 {
 	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
+	bool bIsRotationsEqual = false;
+	if(InValue == TurretMesh->GetComponentRotation())
+	{
+		bIsRotationsEqual = true;
+	}
 	TurretMesh->SetWorldRotation(Rotation);
+
+	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if(!GameMode->IsTurretTurningSoundSpawned() && !bIsRotationsEqual)
+	{
+		GameMode->SpawnTurretTurningSound(GetActorLocation(), GetActorRotation());
+	}
+	if(bIsRotationsEqual)
+	{
+		GameMode->DestroyTurretTurningSound();
+	}
 }
 
 void ATurretPawn::Fire()

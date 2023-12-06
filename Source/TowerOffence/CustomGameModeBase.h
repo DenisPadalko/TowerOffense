@@ -23,6 +23,8 @@ public:
 
 	void OnBeginPlay();
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	void SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const;
 
 	void SpawnHitParticle(const FVector& Location, const FRotator& Rotation) const;
@@ -40,8 +42,24 @@ public:
 	void SpawnHitSound(const FVector& Location, const FRotator& Rotation) const;
 
 	void SpawnOnDeathSound(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnTurretTurningSound(const FVector& Location, const FRotator& Rotation);
+
+	void SpawnMovementSound(const FVector& Location, const FRotator& Rotation);
+
+	void SpawnAmbientSound(const FVector& Location, const FRotator& Rotation);
+
+	void DestroyTurretTurningSound();
+
+	void DestroyMovementSound();
+
+	void DestroyAmbientSound();
 	
 	void DestroyDustFromTank();
+
+	bool IsTurretTurningSoundSpawned() const;
+
+	bool IsMovementSoundSpawned() const;
 
 private:
 	
@@ -82,11 +100,23 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USoundBase> OnDeathSound = nullptr;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> TurretTurningSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> MovementSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> AmbientSound = nullptr;
 private:
 	bool bIsPlayerAlive = false;
 	int EnemiesRemains = 0;
 
 	TObjectPtr<UParticleSystemComponent> LeftDustFromTankComponent = nullptr;
 	TObjectPtr<UParticleSystemComponent> RightDustFromTankComponent = nullptr;
+
+	TObjectPtr<UAudioComponent> TurretTurningSoundComponent = nullptr;
+	TObjectPtr<UAudioComponent> MovementSoundComponent = nullptr;
+	TObjectPtr<UAudioComponent> AmbientSoundComponent = nullptr;
 };

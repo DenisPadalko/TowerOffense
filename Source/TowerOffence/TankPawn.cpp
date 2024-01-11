@@ -70,7 +70,8 @@ void ATankPawn::Tick(float DeltaSeconds)
 	{
 		FHitResult HitResult;
 		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
-		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(), HitResult.ImpactPoint);
+		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(),
+			HitResult.ImpactPoint);
 		Rotation.Roll = 0.0f;
 		Rotation.Pitch = 0.0f;
 		Rotation.Yaw -= 90.0f;
@@ -118,7 +119,10 @@ void ATankPawn::FinishMoving()
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->DestroyDustFromTank();
 
-	GameMode->DestroyMovementSound();
+	if(GameMode->IsMovementSoundSpawned())
+	{
+		GameMode->DestroyMovementSound();
+	}
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
@@ -138,8 +142,11 @@ void ATankPawn::FinishTurn()
 {
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 	GameMode->DestroyDustFromTank();
-
-	GameMode->DestroyMovementSound();
+	
+	if(GameMode->IsMovementSoundSpawned())
+	{
+		GameMode->DestroyMovementSound();
+	}
 }
 
 

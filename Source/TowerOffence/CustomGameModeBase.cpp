@@ -161,20 +161,29 @@ void ACustomGameModeBase::SpawnAmbientSound(const FVector& Location, const FRota
 
 void ACustomGameModeBase::DestroyTurretTurningSound()
 {
-	TurretTurningSoundComponent->Deactivate();
-	TurretTurningSoundComponent = nullptr;
+	if(TurretTurningSoundComponent)
+	{
+		TurretTurningSoundComponent->Deactivate();
+		TurretTurningSoundComponent = nullptr;
+	}
 }
 
 void ACustomGameModeBase::DestroyMovementSound()
 {
-	MovementSoundComponent->Deactivate();
-	MovementSoundComponent = nullptr;
+	if(MovementSoundComponent)
+	{
+		MovementSoundComponent->Deactivate();
+		MovementSoundComponent = nullptr;
+	}
 }
 
 void ACustomGameModeBase::DestroyAmbientSound()
 {
-	AmbientSoundComponent->Deactivate();
-	AmbientSoundComponent = nullptr;
+	if(AmbientSoundComponent)
+	{
+		AmbientSoundComponent->Deactivate();
+		AmbientSoundComponent = nullptr;
+	}
 }
 
 void ACustomGameModeBase::DestroyDustFromTank()

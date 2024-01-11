@@ -85,12 +85,14 @@ void ATurretPawn::PostInitializeComponents()
 
 void ATurretPawn::TurnTurret(const FRotator& InValue) const
 {
-	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue, GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
+	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue,
+		GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
 	bool bIsRotationsEqual = false;
-	if(InValue == TurretMesh->GetComponentRotation())
+	if(FMath::IsNearlyEqual(InValue.Yaw, TurretMesh->GetComponentRotation().Yaw, 0.5))
 	{
 		bIsRotationsEqual = true;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("%f %f"), InValue.Yaw, TurretMesh->GetComponentRotation().Yaw)
 	TurretMesh->SetWorldRotation(Rotation);
 
 	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));

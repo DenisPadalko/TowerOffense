@@ -35,6 +35,20 @@ public:
 	void CallFire();
 
 	virtual void CheckHealth(float CurrentHealth) override;
+
+	void SpawnDustFromTank(const TArray<TObjectPtr<USceneComponent>> AttachToComponent);
+
+	void SpawnLeftDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent);
+
+	void SpawnRightDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent);
+	
+	void SpawnMovementSound(const FVector& Location, const FRotator& Rotation);
+	
+	void DestroyDustFromTank();
+	
+	void DestroyMovementSound();
+	
+	bool IsMovementSoundSpawned() const;
 	
 private:
 	void Move(const float Direction);
@@ -80,6 +94,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<UInputAction> FireAction;
 	
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> MovementSound = nullptr;
+	
 private:
 	float MovementTime = 0.0f;
+	
+	TObjectPtr<UParticleSystemComponent> LeftDustFromTankComponent = nullptr;
+	TObjectPtr<UParticleSystemComponent> RightDustFromTankComponent = nullptr;
+	
+	TObjectPtr<UAudioComponent> MovementSoundComponent = nullptr;
 };

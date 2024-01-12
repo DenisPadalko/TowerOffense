@@ -3,7 +3,7 @@
 
 #include "TurretPawn.h"
 
-#include "CustomGameModeBase.h"
+#include "Components/AudioComponent.h"
 #include "Projectile.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -33,9 +33,8 @@ void ATurretPawn::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimiti
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	GameMode->SpawnHitParticle(HitLocation, FRotator::ZeroRotator);
-	GameMode->SpawnHitSound(HitLocation, FRotator::ZeroRotator);
+	SpawnHitParticle(HitLocation, FRotator::ZeroRotator);
+	SpawnHitSound(HitLocation, FRotator::ZeroRotator);
 }
 
 TArray<FString> ATurretPawn::GetNameOptions() const
@@ -54,8 +53,7 @@ void ATurretPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	GameMode->SpawnAmbientSound(GetActorLocation(), GetActorRotation());
+	SpawnAmbientSound(GetActorLocation(), GetActorRotation());
 }
 
 // Called every frame
@@ -83,7 +81,7 @@ void ATurretPawn::PostInitializeComponents()
 	BaseMesh->SetVectorParameterValueOnMaterials(ParameterName, FVector(ColorOfTeam));
 }
 
-void ATurretPawn::TurnTurret(const FRotator& InValue) const
+void ATurretPawn::TurnTurret(const FRotator& InValue)
 {
 	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue,
 		GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
@@ -92,17 +90,15 @@ void ATurretPawn::TurnTurret(const FRotator& InValue) const
 	{
 		bIsRotationsEqual = true;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%f %f"), InValue.Yaw, TurretMesh->GetComponentRotation().Yaw)
 	TurretMesh->SetWorldRotation(Rotation);
 
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if(!GameMode->IsTurretTurningSoundSpawned() && !bIsRotationsEqual)
+	if(!IsTurretTurningSoundSpawned() && !bIsRotationsEqual)
 	{
-		GameMode->SpawnTurretTurningSound(GetActorLocation(), GetActorRotation());
+		SpawnTurretTurningSound(GetActorLocation(), GetActorRotation());
 	}
 	if(bIsRotationsEqual)
 	{
-		GameMode->DestroyTurretTurningSound();
+		DestroyTurretTurningSound();
 	}
 }
 
@@ -110,9 +106,8 @@ void ATurretPawn::Fire()
 {
 	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
 
-	TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(GetWorld()->GetAuthGameMode());
-	GameMode->SpawnShootParticle(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
-	GameMode->SpawnShootSound(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+	SpawnShootParticle(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+	SpawnShootSound(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 }
 
 void ATurretPawn::CheckHealth(float CurrentHealth)
@@ -121,8 +116,71 @@ void ATurretPawn::CheckHealth(float CurrentHealth)
 	{
 		Destroy();
 
-		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-		GameMode->SpawnDeathParticle(GetActorLocation(), GetActorRotation());
-		GameMode->SpawnOnDeathSound(GetActorLocation(), GetActorRotation());
+		SpawnDeathParticle(GetActorLocation(), GetActorRotation());
+		SpawnOnDeathSound(GetActorLocation(), GetActorRotation());
+		DestroyAmbientSound();
 	}
+}
+
+void ATurretPawn::SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShootParticle, Location, Rotation);
+}
+
+void ATurretPawn::SpawnHitParticle(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, Location, Rotation);
+}
+
+void ATurretPawn::SpawnDeathParticle(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathParticle, Location, Rotation);
+}
+
+void ATurretPawn::SpawnHitSound(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), HitSound, Location, Rotation);
+}
+
+void ATurretPawn::SpawnShootSound(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), ShootSound, Location, Rotation);
+}
+
+void ATurretPawn::SpawnOnDeathSound(const FVector& Location, const FRotator& Rotation) const
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), OnDeathSound, Location, Rotation);
+}
+
+void ATurretPawn::SpawnTurretTurningSound(const FVector& Location, const FRotator& Rotation)
+{
+	TurretTurningSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), TurretTurningSound, Location, Rotation);
+}
+
+void ATurretPawn::SpawnAmbientSound(const FVector& Location, const FRotator& Rotation)
+{
+	AmbientSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AmbientSound, Location, Rotation);
+}
+
+void ATurretPawn::DestroyTurretTurningSound()
+{
+	if(TurretTurningSoundComponent)
+	{
+		TurretTurningSoundComponent->Deactivate();
+		TurretTurningSoundComponent = nullptr;
+	}
+}
+
+void ATurretPawn::DestroyAmbientSound()
+{
+	if(AmbientSoundComponent)
+	{
+		AmbientSoundComponent->Deactivate();
+		AmbientSoundComponent = nullptr;
+	}
+}
+
+bool ATurretPawn::IsTurretTurningSoundSpawned() const
+{
+	return TurretTurningSoundComponent != nullptr;
 }

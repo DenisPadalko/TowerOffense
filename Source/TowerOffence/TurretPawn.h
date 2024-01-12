@@ -23,7 +23,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	void TurnTurret(const FRotator& InValue) const;
+	void TurnTurret(const FRotator& InValue);
 
 	TArray<FString> GetProjectileNameOptions() const;
 
@@ -32,6 +32,28 @@ public:
 
 	UFUNCTION()
 	virtual void CheckHealth(float CurrentHealth);
+
+	void SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnHitParticle(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnDeathParticle(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnShootSound(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnHitSound(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnOnDeathSound(const FVector& Location, const FRotator& Rotation) const;
+
+	void SpawnTurretTurningSound(const FVector& Location, const FRotator& Rotation);
+
+	void SpawnAmbientSound(const FVector& Location, const FRotator& Rotation);
+
+	void DestroyTurretTurningSound();
+
+	void DestroyAmbientSound();
+
+	bool IsTurretTurningSoundSpawned() const;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -82,4 +104,36 @@ public:
 	float TimeBetweenShots = 5.0f;
 
 	float TimeAfterLastShot = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> ShootParticle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> HitParticle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> DeathParticle = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<UParticleSystem> DustFromTank = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> ShootSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> HitSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> OnDeathSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> TurretTurningSound = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TObjectPtr<USoundBase> AmbientSound = nullptr;
+
+private:
+
+	TObjectPtr<UAudioComponent> TurretTurningSoundComponent = nullptr;
+	TObjectPtr<UAudioComponent> AmbientSoundComponent = nullptr;
 };

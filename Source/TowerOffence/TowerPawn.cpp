@@ -72,8 +72,10 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 	{
 		return nullptr;
 	}
+	
 	TObjectPtr<AActor> ClosestTarget = nullptr;
 	float DistanceToClosestTarget = 0.0f;
+	
 	for(const TObjectPtr<AActor> Player : PlayerRef)
 	{
 		if(ClosestTarget == nullptr)
@@ -81,6 +83,7 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 			ClosestTarget = Player;
 			DistanceToClosestTarget = GetSquaredDistanceTo(ClosestTarget);
 		}
+		
 		const float Distance = GetSquaredDistanceTo(Player);
 		if(Distance < DistanceToClosestTarget)
 		{
@@ -88,6 +91,7 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 			DistanceToClosestTarget = Distance;
 		}
 	}
+	
 	return ClosestTarget;
 }
 
@@ -106,6 +110,7 @@ void ATowerPawn::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	TArray<TObjectPtr<AActor>> OutActors;
 	UKismetSystemLibrary::SphereOverlapActors(CollisionSphere, CollisionSphere->GetComponentLocation(),
 		CollisionSphereRadius, TraceObjectTypes, nullptr, IgnoreActors, OutActors);
+
 	for(const TObjectPtr<AActor> Actor : OutActors)
 	{
 		PlayerRef.Add(Actor);

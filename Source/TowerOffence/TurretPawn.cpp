@@ -41,10 +41,12 @@ TArray<FString> ATurretPawn::GetNameOptions() const
 {
 	TArray<FName> MaterialSlotNames = TurretMesh->GetMaterialSlotNames();
 	TArray<FString> Result;
+	
 	for(const FName& Name : MaterialSlotNames)
 	{
 		Result.Add(Name.ToString());
 	}
+	
 	return Result;
 }
 
@@ -86,6 +88,7 @@ void ATurretPawn::TurnTurret(const FRotator& InValue)
 	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue,
 		GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
 	bool bIsRotationsEqual = false;
+
 	if(FMath::IsNearlyEqual(InValue.Yaw, TurretMesh->GetComponentRotation().Yaw, 0.5))
 	{
 		bIsRotationsEqual = true;
@@ -96,6 +99,7 @@ void ATurretPawn::TurnTurret(const FRotator& InValue)
 	{
 		SpawnTurretTurningSound(GetActorLocation(), GetActorRotation());
 	}
+	
 	if(bIsRotationsEqual)
 	{
 		DestroyTurretTurningSound();

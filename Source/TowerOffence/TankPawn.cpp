@@ -40,10 +40,12 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			Subsystem->ClearAllMappings();
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
+		
 		PlayerController->bShowMouseCursor = true;
 		PlayerController->bEnableClickEvents = true;
 		PlayerController->bEnableMouseOverEvents = true;
 	}
+	
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
@@ -80,6 +82,7 @@ void ATankPawn::Tick(float DeltaSeconds)
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
 		TurnTurret(Rotation);
 	}
+	
 	TimeAfterLastShot -= DeltaSeconds;
 }
 
@@ -113,8 +116,16 @@ void ATankPawn::SpawnDustFromTank(const TArray<TObjectPtr<USceneComponent>> Atta
 	{
 		return;
 	}
-	SpawnLeftDustFromTankComponent(AttachToComponent[0]);
-	SpawnRightDustFromTankComponent(AttachToComponent[1]);
+
+	if(AttachToComponent[0])
+	{
+		SpawnLeftDustFromTankComponent(AttachToComponent[0]);
+	}
+
+	if(AttachToComponent[1])
+	{
+		SpawnRightDustFromTankComponent(AttachToComponent[1]);
+	}
 }
 
 void ATankPawn::SpawnLeftDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent)
@@ -140,6 +151,7 @@ void ATankPawn::DestroyDustFromTank()
 		LeftDustFromTankComponent->Deactivate();
 		LeftDustFromTankComponent = nullptr;
 	}
+	
 	if(RightDustFromTankComponent)
 	{
 		RightDustFromTankComponent->Deactivate();
@@ -223,5 +235,6 @@ void ATankPawn::CheckHealth(float CurrentHealth)
 		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
 	}
+	
 	Super::CheckHealth(CurrentHealth);
 }

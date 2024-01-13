@@ -3,6 +3,8 @@
 
 #include "TankPawn.h"
 #include "CustomGameModeBase.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
@@ -70,7 +72,8 @@ void ATankPawn::Tick(float DeltaSeconds)
 	{
 		FHitResult HitResult;
 		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
-		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(), HitResult.ImpactPoint);
+		FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(TurretMesh->GetComponentTransform().GetLocation(),
+			HitResult.ImpactPoint);
 		Rotation.Roll = 0.0f;
 		Rotation.Pitch = 0.0f;
 		Rotation.Yaw -= 90.0f;
@@ -96,8 +99,71 @@ void ATankPawn::Move(const float Direction)
 	const FVector DeltaMove = Velocity * DeltaTime;
 	AddActorLocalOffset(DeltaMove);
 
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	GameMode->SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
+	SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
+
+	if(!IsMovementSoundSpawned())
+	{
+		SpawnMovementSound(GetActorLocation(), GetActorRotation());
+	}
+}
+
+void ATankPawn::SpawnDustFromTank(const TArray<TObjectPtr<USceneComponent>> AttachToComponent)
+{
+	if(LeftDustFromTankComponent || RightDustFromTankComponent)
+	{
+		return;
+	}
+	SpawnLeftDustFromTankComponent(AttachToComponent[0]);
+	SpawnRightDustFromTankComponent(AttachToComponent[1]);
+}
+
+void ATankPawn::SpawnLeftDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent)
+{
+	LeftDustFromTankComponent = UGameplayStatics::SpawnEmitterAttached(DustFromTank, AttachToComponent, FName("Dust point"),
+		FVector(ForceInit), FRotator::ZeroRotator, FVector(1), EAttachLocation::KeepRelativeOffset,
+		false, EPSCPoolMethod::None, false);
+	LeftDustFromTankComponent->Activate(true);
+}
+
+void ATankPawn::SpawnRightDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent)
+{
+	RightDustFromTankComponent = UGameplayStatics::SpawnEmitterAttached(DustFromTank, AttachToComponent, FName("Dust point"),
+		FVector(ForceInit), FRotator::ZeroRotator, FVector(1), EAttachLocation::KeepRelativeOffset,
+		false, EPSCPoolMethod::None, false);
+	RightDustFromTankComponent->Activate(true);
+}
+
+void ATankPawn::DestroyDustFromTank()
+{
+	if(LeftDustFromTankComponent)
+	{
+		LeftDustFromTankComponent->Deactivate();
+		LeftDustFromTankComponent = nullptr;
+	}
+	if(RightDustFromTankComponent)
+	{
+		RightDustFromTankComponent->Deactivate();
+		RightDustFromTankComponent = nullptr;
+	}
+}
+
+void ATankPawn::DestroyMovementSound()
+{
+	if(MovementSoundComponent)
+	{
+		MovementSoundComponent->Deactivate();
+		MovementSoundComponent = nullptr;
+	}
+}
+
+bool ATankPawn::IsMovementSoundSpawned() const
+{
+	return MovementSoundComponent != nullptr;
+}
+
+void ATankPawn::SpawnMovementSound(const FVector& Location, const FRotator& Rotation)
+{
+	MovementSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), MovementSound, Location, Rotation);
 }
 
 float ATankPawn::GetCurrentSpeed() const
@@ -110,22 +176,34 @@ void ATankPawn::FinishMoving()
 {
 	MovementTime = 0.0f;
 
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	GameMode->DestroyDustFromTank();
+	DestroyDustFromTank();
+
+	if(IsMovementSoundSpawned())
+	{
+		DestroyMovementSound();
+	}
 }
 
 void ATankPawn::Turn(const FInputActionValue& InValue)
 {
 	AddActorLocalRotation(FRotator(0.0f, RotationSpeed * InValue.Get<float>(), 0.0f));
 	
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	GameMode->SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
+	SpawnDustFromTank({LeftDustSpawnPoint, RightDustSpawnPoint});
+
+	if(!IsMovementSoundSpawned())
+	{
+		SpawnMovementSound(GetActorLocation(), GetActorRotation());
+	}
 }
 
 void ATankPawn::FinishTurn()
 {
-	const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
-	GameMode->DestroyDustFromTank();
+	DestroyDustFromTank();
+	
+	if(IsMovementSoundSpawned())
+	{
+		DestroyMovementSound();
+	}
 }
 
 

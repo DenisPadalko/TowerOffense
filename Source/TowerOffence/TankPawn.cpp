@@ -224,8 +224,20 @@ void ATankPawn::CallFire()
 	if(TimeAfterLastShot <= 0.0f)
 	{
 		Fire();
+
+		if(CameraShake)
+		{
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake,
+				Camera->GetComponentLocation(), 0, 500, 1.0);
+		}
+
 		TimeAfterLastShot = TimeBetweenShots;
 	}
+}
+
+TSubclassOf<UCameraShakeBase> ATankPawn::GetCameraShake() const
+{
+	return CameraShake;
 }
 
 void ATankPawn::CheckHealth(float CurrentHealth)

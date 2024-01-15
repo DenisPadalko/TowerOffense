@@ -49,6 +49,8 @@ public:
 	void DestroyMovementSound();
 	
 	bool IsMovementSoundSpawned() const;
+
+	TSubclassOf<UCameraShakeBase> GetCameraShake() const;
 	
 private:
 	void Move(const float Direction);
@@ -83,19 +85,22 @@ public:
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputMappingContext> InputMappingContext;
+	TObjectPtr<UInputMappingContext> InputMappingContext = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputAction> MoveForwardAction;
+	TObjectPtr<UInputAction> MoveForwardAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputAction> TurnRightAction;
+	TObjectPtr<UInputAction> TurnRightAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputAction> FireAction;
+	TObjectPtr<UInputAction> FireAction = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USoundBase> MovementSound = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UCameraShakeBase> CameraShake;
 	
 private:
 	float MovementTime = 0.0f;

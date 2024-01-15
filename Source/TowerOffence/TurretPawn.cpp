@@ -5,6 +5,7 @@
 
 #include "Components/AudioComponent.h"
 #include "Projectile.h"
+#include "TankPawn.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -118,6 +119,10 @@ void ATurretPawn::CheckHealth(float CurrentHealth)
 {
 	if(FMath::IsNearlyZero(CurrentHealth))
 	{
+		TObjectPtr<ATankPawn> Player = Cast<ATankPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), Player->GetCameraShake(),
+			Player->Camera->GetComponentLocation(), 0, 500, 1.0);
+		
 		Destroy();
 
 		SpawnDeathParticle(GetActorLocation(), GetActorRotation());

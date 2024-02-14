@@ -41,6 +41,5 @@ void UHealthComponent::OnDamage(AActor* DamagedActor, float DamageTaken, const U
 {
 	ChangeHealth(DamageTaken);
 
-	UE_LOG(LogTemp, Warning, TEXT("Health: %f"), CurrentHealth);
 	OnDamageTaken.Execute(CurrentHealth);
 }

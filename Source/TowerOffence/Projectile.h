@@ -7,6 +7,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Projectile.generated.h"
 
+DECLARE_DELEGATE_OneParam(OnTargetHitDelegate, AActor*)
+
 UCLASS()
 class TOWEROFFENCE_API AProjectile : public AActor
 {
@@ -42,4 +44,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Default")
 	float Damage = 10.0f;
+
+	OnTargetHitDelegate OnTargetHit;
 };

@@ -2,6 +2,8 @@
 
 
 #include "Projectile.h"
+
+#include "TowerPawn.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -31,7 +33,7 @@ void AProjectile::OnConstruction(const FTransform& Transform)
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -44,6 +46,8 @@ void AProjectile::Destroy(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 	FVector Impulse, const FHitResult& Hit)
 {
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, StaticClass());
+
+	OnTargetHit.Execute(OtherActor);
 	
 	AActor::Destroy();
 }

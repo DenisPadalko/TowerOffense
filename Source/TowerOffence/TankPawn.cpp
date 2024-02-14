@@ -7,6 +7,7 @@
 #include "Components/AudioComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -224,20 +225,24 @@ void ATankPawn::CallFire()
 	if(TimeAfterLastShot <= 0.0f)
 	{
 		Fire();
+		Projectile->OnTargetHit.BindUObject(this, &ATankPawn::IsHitActorDead);
 
-		if(CameraShake)
-		{
-			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake,
-				Camera->GetComponentLocation(), 0, 500, 1.0);
-		}
+		ShakeCamera();
 
 		TimeAfterLastShot = TimeBetweenShots;
 	}
 }
 
-TSubclassOf<UCameraShakeBase> ATankPawn::GetCameraShake() const
+void ATankPawn::ShakeCamera()
 {
-	return CameraShake;
+	if(CameraShake)
+	{
+		const TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
+		PlayerController->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake, Camera->GetComponentLocation(),
+			0, 500, 1.0);
+	}
+
+	ATurretPawn::ShakeCamera();
 }
 
 void ATankPawn::CheckHealth(float CurrentHealth)
@@ -246,7 +251,18 @@ void ATankPawn::CheckHealth(float CurrentHealth)
 	{
 		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
+
+		ShakeCamera();
 	}
 	
 	Super::CheckHealth(CurrentHealth);
+}
+
+void ATankPawn::IsHitActorDead(AActor* HitActor)
+{
+	const TObjectPtr<UHealthComponent> HealthComponentOfActor = HitActor->FindComponentByClass<UHealthComponent>();
+	if(HealthComponentOfActor && HealthComponentOfActor->IsZero())
+	{
+		ShakeCamera();
+	}
 }

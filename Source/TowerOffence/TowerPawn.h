@@ -34,6 +34,10 @@ public:
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex);
 
 	virtual void CheckHealth(float CurrentHealth) override;
+
+	UFUNCTION()
+	void IsHitActorDead(AActor* HitActor);
+	
 private:
 
 	void GetRotation(const TObjectPtr<AActor> Player, FRotator* Rotation) const;

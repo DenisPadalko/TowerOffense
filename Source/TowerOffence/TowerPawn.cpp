@@ -50,6 +50,7 @@ void ATowerPawn::Tick(float DeltaSeconds)
 		{
 			TimeAfterLastShot = TimeBetweenShots;
 			Fire();
+			Projectile->OnTargetHit.BindUObject(this, &ATowerPawn::IsHitActorDead);
 		}
 		else
 		{
@@ -130,4 +131,9 @@ void ATowerPawn::CheckHealth(float CurrentHealth)
 		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
 	}
+}
+
+void ATowerPawn::IsHitActorDead(AActor* HitActor)
+{
+	//just an empty function to avoid crash
 }

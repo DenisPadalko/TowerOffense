@@ -241,8 +241,6 @@ void ATankPawn::ShakeCamera()
 		PlayerController->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake, Camera->GetComponentLocation(),
 			0, 500, 1.0);
 	}
-
-	ATurretPawn::ShakeCamera();
 }
 
 void ATankPawn::CheckHealth(float CurrentHealth)

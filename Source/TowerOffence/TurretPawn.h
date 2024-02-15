@@ -32,9 +32,6 @@ public:
 
 	UFUNCTION()
 	virtual void CheckHealth(float CurrentHealth);
-
-	UFUNCTION()
-	virtual void ShakeCamera();
 	
 	void SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const;
 
@@ -57,8 +54,6 @@ public:
 	void DestroyAmbientSound();
 
 	bool IsTurretTurningSoundSpawned() const;
-	
-	TSubclassOf<UCameraShakeBase> GetCameraShake() const;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -138,8 +133,6 @@ public:
 	TObjectPtr<USoundBase> AmbientSound = nullptr;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TSubclassOf<UCameraShakeBase> CameraShake;
 
 	UPROPERTY()
 	TObjectPtr<AProjectile> Projectile = nullptr;

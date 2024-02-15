@@ -50,8 +50,9 @@ public:
 	
 	bool IsMovementSoundSpawned() const;
 
-	virtual void ShakeCamera() override;
+	void ShakeCamera();
 
+	UFUNCTION()
 	void IsHitActorDead(AActor* HitActor);
 	
 private:
@@ -100,6 +101,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USoundBase> MovementSound = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UCameraShakeBase> CameraShake;
 	
 private:
 	float MovementTime = 0.0f;

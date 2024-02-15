@@ -114,14 +114,6 @@ void ATurretPawn::Fire()
 	SpawnShootSound(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 }
 
-void ATurretPawn::ShakeCamera()
-{}
-
-TSubclassOf<UCameraShakeBase> ATurretPawn::GetCameraShake() const
-{
-	return CameraShake;
-}
-
 void ATurretPawn::CheckHealth(float CurrentHealth)
 {
 	if(FMath::IsNearlyZero(CurrentHealth))

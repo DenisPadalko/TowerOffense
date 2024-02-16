@@ -239,7 +239,7 @@ void ATankPawn::ShakeCamera()
 	{
 		const TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
 		PlayerController->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake, Camera->GetComponentLocation(),
-			0, 500, 1.0);
+			CameraShakeInnerRadius, CameraShakeOuterRadius, CameraShakeFallof);
 	}
 }
 

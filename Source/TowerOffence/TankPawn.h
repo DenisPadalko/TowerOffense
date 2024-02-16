@@ -112,4 +112,8 @@ private:
 	TObjectPtr<UParticleSystemComponent> RightDustFromTankComponent = nullptr;
 	
 	TObjectPtr<UAudioComponent> MovementSoundComponent = nullptr;
+
+	float CameraShakeInnerRadius = 0.0f;
+	float CameraShakeOuterRadius = 500.0f;
+	float CameraShakeFallof = 1.0;
 };

@@ -32,7 +32,7 @@ public:
 
 	UFUNCTION()
 	virtual void CheckHealth(float CurrentHealth);
-
+	
 	void SpawnShootParticle(const FVector& Location, const FRotator& Rotation) const;
 
 	void SpawnHitParticle(const FVector& Location, const FRotator& Rotation) const;
@@ -132,8 +132,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USoundBase> AmbientSound = nullptr;
 
-private:
+protected:
 
+	UPROPERTY()
+	TObjectPtr<AProjectile> Projectile = nullptr;
+private:
+	
 	TObjectPtr<UAudioComponent> TurretTurningSoundComponent = nullptr;
 	TObjectPtr<UAudioComponent> AmbientSoundComponent = nullptr;
 };

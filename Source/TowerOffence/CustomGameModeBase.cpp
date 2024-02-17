@@ -54,6 +54,7 @@ void ACustomGameModeBase::CheckWinConditions(const APawn* Pawn)
 	{
 		--EnemiesRemains;
 	}
+	
 	if(EnemiesRemains == 0)
 	{
 		PlayerController->SpawnWinWidget();

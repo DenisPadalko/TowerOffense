@@ -7,6 +7,7 @@
 #include "Components/AudioComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -40,10 +41,12 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			Subsystem->ClearAllMappings();
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
+		
 		PlayerController->bShowMouseCursor = true;
 		PlayerController->bEnableClickEvents = true;
 		PlayerController->bEnableMouseOverEvents = true;
 	}
+	
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ATankPawn::InputMove);
@@ -80,6 +83,7 @@ void ATankPawn::Tick(float DeltaSeconds)
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 500, 16, FColor::Red);
 		TurnTurret(Rotation);
 	}
+	
 	TimeAfterLastShot -= DeltaSeconds;
 }
 
@@ -113,8 +117,16 @@ void ATankPawn::SpawnDustFromTank(const TArray<TObjectPtr<USceneComponent>> Atta
 	{
 		return;
 	}
-	SpawnLeftDustFromTankComponent(AttachToComponent[0]);
-	SpawnRightDustFromTankComponent(AttachToComponent[1]);
+
+	if(AttachToComponent[0])
+	{
+		SpawnLeftDustFromTankComponent(AttachToComponent[0]);
+	}
+
+	if(AttachToComponent[1])
+	{
+		SpawnRightDustFromTankComponent(AttachToComponent[1]);
+	}
 }
 
 void ATankPawn::SpawnLeftDustFromTankComponent(const TObjectPtr<USceneComponent> AttachToComponent)
@@ -140,6 +152,7 @@ void ATankPawn::DestroyDustFromTank()
 		LeftDustFromTankComponent->Deactivate();
 		LeftDustFromTankComponent = nullptr;
 	}
+	
 	if(RightDustFromTankComponent)
 	{
 		RightDustFromTankComponent->Deactivate();
@@ -212,7 +225,21 @@ void ATankPawn::CallFire()
 	if(TimeAfterLastShot <= 0.0f)
 	{
 		Fire();
+		Projectile->OnTargetHit.BindUObject(this, &ATankPawn::IsHitActorDead);
+
+		ShakeCamera();
+
 		TimeAfterLastShot = TimeBetweenShots;
+	}
+}
+
+void ATankPawn::ShakeCamera()
+{
+	if(CameraShake)
+	{
+		const TObjectPtr<APlayerController> PlayerController = Cast<APlayerController>(GetController());
+		PlayerController->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake, Camera->GetComponentLocation(),
+			CameraShakeInnerRadius, CameraShakeOuterRadius, CameraShakeFalloff);
 	}
 }
 
@@ -222,6 +249,18 @@ void ATankPawn::CheckHealth(float CurrentHealth)
 	{
 		TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
+
+		ShakeCamera();
 	}
+	
 	Super::CheckHealth(CurrentHealth);
+}
+
+void ATankPawn::IsHitActorDead(AActor* HitActor)
+{
+	const TObjectPtr<UHealthComponent> HealthComponentOfActor = HitActor->FindComponentByClass<UHealthComponent>();
+	if(HealthComponentOfActor && HealthComponentOfActor->IsZero())
+	{
+		ShakeCamera();
+	}
 }

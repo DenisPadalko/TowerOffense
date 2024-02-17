@@ -50,6 +50,7 @@ void ATowerPawn::Tick(float DeltaSeconds)
 		{
 			TimeAfterLastShot = TimeBetweenShots;
 			Fire();
+			Projectile->OnTargetHit.BindUObject(this, &ATowerPawn::IsHitActorDead);
 		}
 		else
 		{
@@ -72,8 +73,10 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 	{
 		return nullptr;
 	}
+	
 	TObjectPtr<AActor> ClosestTarget = nullptr;
 	float DistanceToClosestTarget = 0.0f;
+	
 	for(const TObjectPtr<AActor> Player : PlayerRef)
 	{
 		if(ClosestTarget == nullptr)
@@ -81,6 +84,7 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 			ClosestTarget = Player;
 			DistanceToClosestTarget = GetSquaredDistanceTo(ClosestTarget);
 		}
+		
 		const float Distance = GetSquaredDistanceTo(Player);
 		if(Distance < DistanceToClosestTarget)
 		{
@@ -88,6 +92,7 @@ TObjectPtr<AActor> ATowerPawn::GetClosestTarget() const
 			DistanceToClosestTarget = Distance;
 		}
 	}
+	
 	return ClosestTarget;
 }
 
@@ -106,6 +111,7 @@ void ATowerPawn::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	TArray<TObjectPtr<AActor>> OutActors;
 	UKismetSystemLibrary::SphereOverlapActors(CollisionSphere, CollisionSphere->GetComponentLocation(),
 		CollisionSphereRadius, TraceObjectTypes, nullptr, IgnoreActors, OutActors);
+
 	for(const TObjectPtr<AActor> Actor : OutActors)
 	{
 		PlayerRef.Add(Actor);
@@ -125,4 +131,9 @@ void ATowerPawn::CheckHealth(float CurrentHealth)
 		const TObjectPtr<ACustomGameModeBase> GameMode = Cast<ACustomGameModeBase>(UGameplayStatics::GetGameMode(this));
 		GameMode->OnPawnKilled(this);
 	}
+}
+
+void ATowerPawn::IsHitActorDead(AActor* HitActor)
+{
+	//just an empty function to avoid crash
 }

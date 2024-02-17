@@ -49,6 +49,11 @@ public:
 	void DestroyMovementSound();
 	
 	bool IsMovementSoundSpawned() const;
+
+	void ShakeCamera();
+
+	UFUNCTION()
+	void IsHitActorDead(AActor* HitActor);
 	
 private:
 	void Move(const float Direction);
@@ -83,19 +88,22 @@ public:
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputMappingContext> InputMappingContext;
+	TObjectPtr<UInputMappingContext> InputMappingContext = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputAction> MoveForwardAction;
+	TObjectPtr<UInputAction> MoveForwardAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputAction> TurnRightAction;
+	TObjectPtr<UInputAction> TurnRightAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category="Default")
-	TObjectPtr<UInputAction> FireAction;
+	TObjectPtr<UInputAction> FireAction = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Default")
 	TObjectPtr<USoundBase> MovementSound = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Default")
+	TSubclassOf<UCameraShakeBase> CameraShake;
 	
 private:
 	float MovementTime = 0.0f;
@@ -104,4 +112,13 @@ private:
 	TObjectPtr<UParticleSystemComponent> RightDustFromTankComponent = nullptr;
 	
 	TObjectPtr<UAudioComponent> MovementSoundComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category="Camera shake")
+	float CameraShakeInnerRadius = 0.0f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Camera shake")
+	float CameraShakeOuterRadius = 500.0f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Camera shake")
+	float CameraShakeFalloff = 1.0;
 };

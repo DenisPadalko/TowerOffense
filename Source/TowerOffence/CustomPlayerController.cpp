@@ -28,6 +28,7 @@ void ACustomPlayerController::SpawnWinWidget()
 		{
 			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), WinWidget);
 		}
+		
 		if(!WidgetInstance->IsInViewport())
 		{
 			WidgetInstance->AddToViewport(9999);
@@ -43,6 +44,7 @@ void ACustomPlayerController::SpawnLoseWidget()
 		{
 			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), LoseWidget);
 		}
+		
 		if(!WidgetInstance->IsInViewport())
 		{
 			WidgetInstance->AddToViewport(9999);
@@ -58,6 +60,7 @@ void ACustomPlayerController::SpawnBeforeStartWidget()
 		{
 			WidgetInstance = CreateWidget(GetWorld()->GetFirstPlayerController(), BeforeStartWidget);
 		}
+		
 		if(!WidgetInstance->IsInViewport())
 		{
 			WidgetInstance->AddToViewport(9999);

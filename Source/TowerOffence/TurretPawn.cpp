@@ -41,10 +41,12 @@ TArray<FString> ATurretPawn::GetNameOptions() const
 {
 	TArray<FName> MaterialSlotNames = TurretMesh->GetMaterialSlotNames();
 	TArray<FString> Result;
+	
 	for(const FName& Name : MaterialSlotNames)
 	{
 		Result.Add(Name.ToString());
 	}
+	
 	return Result;
 }
 
@@ -86,6 +88,7 @@ void ATurretPawn::TurnTurret(const FRotator& InValue)
 	const FRotator Rotation = FMath::RInterpTo(TurretMesh->GetComponentRotation(), InValue,
 		GetWorld()->GetDeltaSeconds(), TurretRotationSpeed);
 	bool bIsRotationsEqual = false;
+
 	if(FMath::IsNearlyEqual(InValue.Yaw, TurretMesh->GetComponentRotation().Yaw, 0.5))
 	{
 		bIsRotationsEqual = true;
@@ -96,6 +99,7 @@ void ATurretPawn::TurnTurret(const FRotator& InValue)
 	{
 		SpawnTurretTurningSound(GetActorLocation(), GetActorRotation());
 	}
+	
 	if(bIsRotationsEqual)
 	{
 		DestroyTurretTurningSound();
@@ -104,8 +108,8 @@ void ATurretPawn::TurnTurret(const FRotator& InValue)
 
 void ATurretPawn::Fire()
 {
-	GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
-
+	Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileToSpawn, ProjectileSpawnPoint->GetComponentTransform());
+	
 	SpawnShootParticle(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 	SpawnShootSound(ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 }
@@ -113,7 +117,7 @@ void ATurretPawn::Fire()
 void ATurretPawn::CheckHealth(float CurrentHealth)
 {
 	if(FMath::IsNearlyZero(CurrentHealth))
-	{
+	{		
 		Destroy();
 
 		SpawnDeathParticle(GetActorLocation(), GetActorRotation());

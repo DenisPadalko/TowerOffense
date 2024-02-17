@@ -113,7 +113,12 @@ private:
 	
 	TObjectPtr<UAudioComponent> MovementSoundComponent = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category="Camera shake")
 	float CameraShakeInnerRadius = 0.0f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Camera shake")
 	float CameraShakeOuterRadius = 500.0f;
-	float CameraShakeFallof = 1.0;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Camera shake")
+	float CameraShakeFalloff = 1.0;
 };
